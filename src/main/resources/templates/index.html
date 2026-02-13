@@ -1,0 +1,979 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sport Club Management | Dashboard Intelligent</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(67, 97, 238, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen" id="themeBody">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                        <i class="fas fa-running text-2xl" style="background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">SportClub<span class="text-yellow-300">Pro</span></h1>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="flex items-center space-x-2 font-medium">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="/members" class="flex items-center space-x-2 hover:text-yellow-300">
+                        <i class="fas fa-users"></i>
+                        <span>Membres</span>
+                    </a>
+                    <a href="/activities" class="flex items-center space-x-2 hover:text-yellow-300">
+                        <i class="fas fa-futbol"></i>
+                        <span>Activités</span>
+                    </a>
+                    <a href="/about" class="flex items-center space-x-2 hover:text-yellow-300">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Technologie</span>
+                    </a>
+                    
+                    <button id="themeToggle" class="glass-effect p-2 rounded-lg hover:bg-white hover:bg-opacity-20">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    
+                    <div class="relative group">
+                        <button class="relative p-2" onclick="toggleNotifications()">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                        </button>
+                        <div id="notificationPanel" class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 shadow-2xl rounded-lg p-4 hidden">
+                            <h3 class="font-bold mb-2 text-gray-800 dark:text-white">Notifications</h3>
+                            <div id="notificationList" class="space-y-2 max-h-60 overflow-y-auto">
+                                <!-- Notifications loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="mobileMenuBtn" class="md:hidden text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="closeMobileMenu()">
+        <div class="absolute right-0 top-0 h-full w-64 bg-white shadow-xl" onclick="event.stopPropagation()">
+            <div class="p-6 space-y-6">
+                <button onclick="closeMobileMenu()" class="absolute top-4 right-4 text-2xl text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+                <a href="/" class="block text-xl font-semibold text-gray-800" onclick="closeMobileMenu()">Dashboard</a>
+                <a href="/members" class="block text-xl font-semibold text-gray-800" onclick="closeMobileMenu()">Membres</a>
+                <a href="/activities" class="block text-xl font-semibold text-gray-800" onclick="closeMobileMenu()">Activités</a>
+                <a href="/about" class="block text-xl font-semibold text-gray-800" onclick="closeMobileMenu()">Technologie</a>
+                <a href="/contact" class="block text-xl font-semibold text-gray-800" onclick="closeMobileMenu()">Contact</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-20 px-4 md:px-6">
+        <div class="max-w-7xl mx-auto">
+            <!-- Hero Section -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
+                    Dashboard <span class="text-blue-600">SportClub</span>
+                </h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Gestion intelligente de votre club sportif avec analytics en temps réel
+                </p>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+                <div class="bg-white rounded-xl shadow-lg p-6 hover-lift">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500">Membres Actifs</p>
+                            <h2 id="activeMembers" class="text-3xl font-bold">0</h2>
+                            <p class="text-green-500 text-sm mt-2">
+                                <i class="fas fa-arrow-up mr-1"></i> <span id="memberGrowth">0%</span> croissance
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-users text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <canvas id="memberChart" class="mt-4" height="60"></canvas>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-6 hover-lift">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500">Activités</p>
+                            <h2 class="text-3xl font-bold" id="activityCount">5</h2>
+                            <p class="text-blue-500 text-sm mt-2">
+                                <i class="fas fa-fire mr-1"></i> <span id="popularActivity">Football</span>
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-futbol text-purple-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span>Football</span>
+                            <span class="font-semibold" id="footballCapacity">0/20</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div id="footballBar" class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-6 hover-lift">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500">Revenu Mensuel</p>
+                            <h2 class="text-3xl font-bold" id="monthlyRevenue">0€</h2>
+                            <p class="text-green-500 text-sm mt-2">
+                                <i class="fas fa-chart-line mr-1"></i> <span id="revenueGrowth">0%</span>
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-euro-sign text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm text-gray-500">
+                        Objectif: <span id="revenueTarget">5000€</span>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-6 hover-lift">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500">Satisfaction</p>
+                            <h2 class="text-3xl font-bold" id="satisfactionScore">0%</h2>
+                            <p class="text-yellow-500 text-sm mt-2">
+                                <i class="fas fa-star mr-1"></i> 4.8/5
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-smile text-yellow-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex space-x-1">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star-half-alt text-yellow-400"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Graphiques -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">Activité des Membres</h3>
+                        <select id="activityPeriod" class="bg-gray-100 rounded-lg px-3 py-1" onchange="updateActivityChart()">
+                            <option value="7">7 derniers jours</option>
+                            <option value="30" selected>30 derniers jours</option>
+                            <option value="90">3 mois</option>
+                        </select>
+                    </div>
+                    <canvas id="activityChart" height="250"></canvas>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">Répartition par Statut</h3>
+                        <button onclick="exportDistributionChart()" class="text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-download"></i> Exporter
+                        </button>
+                    </div>
+                    <canvas id="statusChart" height="250"></canvas>
+                </div>
+            </div>
+            
+            <!-- Actions Rapides -->
+            <div class="mb-12">
+                <h3 class="text-2xl font-bold mb-6 text-gray-800">Actions Rapides</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button onclick="quickAction('newMember')" class="bg-white p-6 rounded-xl shadow-lg hover-lift group">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-user-plus text-2xl text-blue-600"></i>
+                            </div>
+                            <p class="font-semibold text-gray-800">Nouveau Membre</p>
+                            <p class="text-sm text-gray-500 mt-1">Ajout rapide</p>
+                        </div>
+                    </button>
+                    
+                    <button onclick="quickAction('bulkImport')" class="bg-white p-6 rounded-xl shadow-lg hover-lift group">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-file-import text-2xl text-green-600"></i>
+                            </div>
+                            <p class="font-semibold text-gray-800">Import CSV</p>
+                            <p class="text-sm text-gray-500 mt-1">Masse de données</p>
+                        </div>
+                    </button>
+                    
+                    <button onclick="quickAction('generateReport')" class="bg-white p-6 rounded-xl shadow-lg hover-lift group">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-chart-pie text-2xl text-purple-600"></i>
+                            </div>
+                            <p class="font-semibold text-gray-800">Générer Rapport</p>
+                            <p class="text-sm text-gray-500 mt-1">PDF automatique</p>
+                        </div>
+                    </button>
+                    
+                    <button onclick="quickAction('apiTest')" class="bg-white p-6 rounded-xl shadow-lg hover-lift group">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-code text-2xl text-orange-600"></i>
+                            </div>
+                            <p class="font-semibold text-gray-800">Tester API</p>
+                            <p class="text-sm text-gray-500 mt-1">Requêtes en direct</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Derniers Membres -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Derniers Membres Inscrits</h3>
+                    <a href="/members" class="text-blue-600 hover:text-blue-800 font-medium">
+                        Voir tous <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+                <div id="recentMembers" class="overflow-x-auto">
+                    <!-- Loaded dynamically -->
+                    <div class="text-center py-8">
+                        <div class="spinner-border text-blue-600"></div>
+                        <p class="mt-2 text-gray-600">Chargement des membres...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                            <i class="fas fa-running text-2xl text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold">SportClub<span class="text-yellow-300">Pro</span></h2>
+                            <p class="text-sm opacity-75">Management 4.0</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400">Gestion intelligente de club sportif</p>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Liens Rapides</h3>
+                    <div class="space-y-2">
+                        <a href="/members" class="block text-gray-400 hover:text-white">Gestion des membres</a>
+                        <a href="/activities" class="block text-gray-400 hover:text-white">Activités sportives</a>
+                        <a href="/swagger-ui.html" target="_blank" class="block text-gray-400 hover:text-white">Documentation API</a>
+                        <a href="/h2-console" target="_blank" class="block text-gray-400 hover:text-white">Base de données</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Statistiques</h3>
+                    <div class="space-y-2 text-gray-400">
+                        <div class="flex justify-between">
+                            <span>Port:</span>
+                            <span class="font-bold">8083</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Base de données:</span>
+                            <span class="font-bold text-green-400">H2</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Version:</span>
+                            <span class="font-bold">1.0.0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Documentation</h3>
+                    <div class="flex space-x-4">
+                        <button onclick="openSwagger()" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition">
+                            <i class="fas fa-code"></i>
+                        </button>
+                        <button onclick="openDatabase()" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-green-600 transition">
+                            <i class="fas fa-database"></i>
+                        </button>
+                        <button onclick="openGitHub()" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition">
+                            <i class="fab fa-github"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500">
+                <p>© 2024 SportClub Management. Projet Spring Boot pour soutenance DevOps.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal pour actions rapides -->
+    <div id="actionModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="modalActionTitle" class="text-xl font-bold text-gray-800"></h3>
+                    <button onclick="closeActionModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="modalActionContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        const API_BASE = '/api/members';
+        let activityChart, statusChart, memberTrendChart;
+        let notifications = [];
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+            initCharts();
+            setupEventListeners();
+            loadRecentMembers();
+            loadNotifications();
+        });
+        
+        // Initialisation des graphiques
+        function initCharts() {
+            // Chart for member trend
+            const memberCtx = document.getElementById('memberChart').getContext('2d');
+            memberTrendChart = new Chart(memberCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'],
+                    datasets: [{
+                        data: [12, 19, 15, 25, 22, 30],
+                        borderColor: '#4361ee',
+                        backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { display: false },
+                        x: { display: false }
+                    },
+                    elements: {
+                        point: { radius: 0 }
+                    }
+                }
+            });
+            
+            // Activity chart
+            const activityCtx = document.getElementById('activityChart').getContext('2d');
+            activityChart = new Chart(activityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+                    datasets: [{
+                        label: 'Inscriptions',
+                        data: [65, 59, 80, 81, 56, 55, 40],
+                        backgroundColor: 'rgba(67, 97, 238, 0.7)',
+                        borderColor: '#4361ee',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+            
+            // Status distribution chart
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            statusChart = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Actif', 'Inactif', 'En attente'],
+                    datasets: [{
+                        data: [70, 20, 10],
+                        backgroundColor: [
+                            '#10b981',
+                            '#ef4444',
+                            '#f59e0b'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Chargement des données
+        async function loadDashboardData() {
+            try {
+                // Get member count
+                const countResponse = await axios.get(`${API_BASE}/count`);
+                const memberCount = countResponse.data;
+                document.getElementById('activeMembers').textContent = memberCount;
+                
+                // Simulate growth
+                const growth = Math.min(Math.floor(Math.random() * 20) + 5, 100);
+                document.getElementById('memberGrowth').textContent = `${growth}%`;
+                
+                // Load all members for statistics
+                const membersResponse = await axios.get(API_BASE);
+                const members = membersResponse.data;
+                
+                // Calculate statistics
+                const activeCount = members.filter(m => m.status === 'ACTIVE').length;
+                const inactiveCount = members.filter(m => m.status === 'INACTIVE').length;
+                const pendingCount = members.filter(m => m.status === 'PENDING').length;
+                
+                // Update status chart
+                statusChart.data.datasets[0].data = [activeCount, inactiveCount, pendingCount];
+                statusChart.update();
+                
+                // Update other stats
+                document.getElementById('monthlyRevenue').textContent = `${(memberCount * 25).toLocaleString()}€`;
+                document.getElementById('satisfactionScore').textContent = `${Math.min(95 + Math.floor(Math.random() * 5), 100)}%`;
+                document.getElementById('footballCapacity').textContent = '15/20';
+                document.getElementById('footballBar').style.width = '75%';
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showNotification('Erreur de chargement des données', 'error');
+            }
+        }
+        
+        // Charger les membres récents
+        async function loadRecentMembers() {
+            try {
+                const response = await axios.get(API_BASE);
+                const members = response.data.slice(-5).reverse(); // Get last 5 members
+                
+                const container = document.getElementById('recentMembers');
+                if (members.length === 0) {
+                    container.innerHTML = '<p class="text-center text-gray-500 py-8">Aucun membre trouvé</p>';
+                    return;
+                }
+                
+                let html = `
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left py-3 px-4 text-gray-600 font-semibold">Nom</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-semibold">Email</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-semibold">Inscription</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-semibold">Statut</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-semibold">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                members.forEach(member => {
+                    const statusClass = member.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                                      member.status === 'INACTIVE' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800';
+                    const statusText = member.status === 'ACTIVE' ? 'Actif' :
+                                     member.status === 'INACTIVE' ? 'Inactif' : 'En attente';
+                    
+                    html += `
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-4">
+                                <div class="font-medium">${member.firstName} ${member.lastName}</div>
+                            </td>
+                            <td class="py-3 px-4 text-gray-600">${member.email}</td>
+                            <td class="py-3 px-4 text-gray-600">${new Date(member.registrationDate).toLocaleDateString()}</td>
+                            <td class="py-3 px-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-medium ${statusClass}">
+                                    ${statusText}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4">
+                                <button onclick="editMember(${member.id})" class="text-blue-600 hover:text-blue-800 mr-2">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="viewMember(${member.id})" class="text-green-600 hover:text-green-800">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                container.innerHTML = html;
+                
+            } catch (error) {
+                document.getElementById('recentMembers').innerHTML = 
+                    '<p class="text-center text-red-500 py-8">Erreur de chargement des membres</p>';
+            }
+        }
+        
+        // Gestion des notifications
+        async function loadNotifications() {
+            // Simulated notifications
+            notifications = [
+                { id: 1, type: 'info', message: 'Bienvenue sur SportClub Pro', time: 'Il y a 5 min', read: false },
+                { id: 2, type: 'success', message: 'Nouveau membre inscrit: Jean Dupont', time: 'Il y a 2 heures', read: false },
+                { id: 3, type: 'warning', message: 'Session Tennis bientôt complète', time: 'Il y a 1 jour', read: true }
+            ];
+            
+            updateNotificationBadge();
+        }
+        
+        function updateNotificationBadge() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            const badge = document.querySelector('.relative button .absolute');
+            if (unreadCount > 0) {
+                badge.classList.remove('hidden');
+                // You could update the count if using a number badge
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+        
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            panel.classList.toggle('hidden');
+            
+            if (!panel.classList.contains('hidden')) {
+                displayNotifications();
+            }
+        }
+        
+        function displayNotifications() {
+            const container = document.getElementById('notificationList');
+            if (notifications.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">Aucune notification</p>';
+                return;
+            }
+            
+            let html = '';
+            notifications.forEach(notification => {
+                const icon = notification.type === 'info' ? 'fa-info-circle text-blue-500' :
+                           notification.type === 'success' ? 'fa-check-circle text-green-500' : 
+                           'fa-exclamation-triangle text-yellow-500';
+                
+                html += `
+                    <div class="p-3 ${notification.read ? 'bg-gray-50' : 'bg-blue-50'} rounded-lg">
+                        <div class="flex items-start">
+                            <i class="fas ${icon} mt-1 mr-3"></i>
+                            <div class="flex-1">
+                                <p class="text-sm ${notification.read ? 'text-gray-600' : 'text-gray-800'}">${notification.message}</p>
+                                <p class="text-xs text-gray-500 mt-1">${notification.time}</p>
+                            </div>
+                            ${!notification.read ? `
+                            <button onclick="markNotificationRead(${notification.id})" class="text-gray-400 hover:text-gray-600 ml-2">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function markNotificationRead(id) {
+            const notification = notifications.find(n => n.id === id);
+            if (notification) {
+                notification.read = true;
+                updateNotificationBadge();
+                displayNotifications();
+            }
+        }
+        
+        // Actions rapides
+        function quickAction(action) {
+            switch(action) {
+                case 'newMember':
+                    window.location.href = '/members?action=add';
+                    break;
+                    
+                case 'bulkImport':
+                    showBulkImportModal();
+                    break;
+                    
+                case 'generateReport':
+                    generateReport();
+                    break;
+                    
+                case 'apiTest':
+                    testAPI();
+                    break;
+            }
+        }
+        
+        function showBulkImportModal() {
+            document.getElementById('modalActionTitle').textContent = 'Import CSV';
+            document.getElementById('modalActionContent').innerHTML = `
+                <div class="space-y-4">
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                        <i class="fas fa-file-csv text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600 mb-4">Glissez-déposez votre fichier CSV ici</p>
+                        <input type="file" id="csvFile" accept=".csv" class="hidden">
+                        <label for="csvFile" class="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700">
+                            <i class="fas fa-upload mr-2"></i>Choisir un fichier
+                        </label>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <p><i class="fas fa-info-circle mr-2"></i>Format requis: firstName,lastName,email,phone</p>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button onclick="closeActionModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                            Annuler
+                        </button>
+                        <button onclick="processCSVUpload()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            <i class="fas fa-upload mr-2"></i>Importer
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('actionModal').classList.remove('hidden');
+        }
+        
+        function processCSVUpload() {
+            const fileInput = document.getElementById('csvFile');
+            if (!fileInput.files.length) {
+                showNotification('Veuillez sélectionner un fichier', 'warning');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const csvContent = e.target.result;
+                // Parse CSV and create members
+                const lines = csvContent.split('\n');
+                let successCount = 0;
+                let errorCount = 0;
+                
+                // Skip header line
+                for (let i = 1; i < lines.length; i++) {
+                    const columns = lines[i].split(',');
+                    if (columns.length >= 3) {
+                        // Simulate API call
+                        setTimeout(() => {
+                            // In real implementation, call your API
+                            console.log('Creating member:', columns);
+                        }, i * 100);
+                    }
+                }
+                
+                closeActionModal();
+                showNotification(`Import terminé: ${successCount} succès, ${errorCount} erreurs`, 'success');
+                loadDashboardData();
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        function generateReport() {
+            showNotification('Génération du rapport en cours...', 'info');
+            
+            // Simulate report generation
+            setTimeout(() => {
+                // Create a PDF download link
+                const data = {
+                    totalMembers: document.getElementById('activeMembers').textContent,
+                    monthlyRevenue: document.getElementById('monthlyRevenue').textContent,
+                    satisfaction: document.getElementById('satisfactionScore').textContent,
+                    generatedAt: new Date().toLocaleString()
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `rapport-sportclub-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification('Rapport généré avec succès!', 'success');
+            }, 2000);
+        }
+        
+        function testAPI() {
+            document.getElementById('modalActionTitle').textContent = 'Test API REST';
+            document.getElementById('modalActionContent').innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-medium text-gray-800 mb-2">Endpoints disponibles:</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center justify-between">
+                                <code class="bg-gray-200 px-2 py-1 rounded">GET /api/members</code>
+                                <button onclick="testEndpoint('GET', '/api/members')" class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-play"></i> Tester
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <code class="bg-gray-200 px-2 py-1 rounded">POST /api/members</code>
+                                <button onclick="testCreateMember()" class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-play"></i> Tester
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <code class="bg-gray-200 px-2 py-1 rounded">GET /api/members/count</code>
+                                <button onclick="testEndpoint('GET', '/api/members/count')" class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-play"></i> Tester
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="apiTestResult" class="hidden">
+                        <h4 class="font-medium text-gray-800 mb-2">Résultat:</h4>
+                        <pre class="bg-gray-900 text-green-400 p-3 rounded text-sm overflow-auto max-h-40"></pre>
+                    </div>
+                    <div class="flex justify-end pt-4">
+                        <button onclick="closeActionModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('actionModal').classList.remove('hidden');
+        }
+        
+        async function testEndpoint(method, endpoint) {
+            const resultDiv = document.getElementById('apiTestResult');
+            const pre = resultDiv.querySelector('pre');
+            
+            try {
+                let response;
+                if (method === 'GET') {
+                    response = await axios.get(endpoint);
+                } else if (method === 'POST') {
+                    response = await axios.post(endpoint, {
+                        firstName: "Test",
+                        lastName: "API",
+                        email: `test${Date.now()}@sportclub.com`
+                    });
+                }
+                
+                pre.textContent = JSON.stringify(response.data, null, 2);
+                resultDiv.classList.remove('hidden');
+                showNotification('Test API réussi!', 'success');
+            } catch (error) {
+                pre.textContent = `Erreur: ${error.message}\n${error.response ? JSON.stringify(error.response.data, null, 2) : ''}`;
+                resultDiv.classList.remove('hidden');
+                showNotification('Test API échoué', 'error');
+            }
+        }
+        
+        function testCreateMember() {
+            testEndpoint('POST', '/api/members');
+        }
+        
+        function updateActivityChart() {
+            const period = document.getElementById('activityPeriod').value;
+            // In real implementation, fetch data for selected period
+            showNotification(`Graphique mis à jour pour ${period} jours`, 'info');
+        }
+        
+        function exportDistributionChart() {
+            const link = document.createElement('a');
+            link.download = 'distribution-statuts.png';
+            link.href = document.getElementById('statusChart').toDataURL('image/png');
+            link.click();
+            showNotification('Graphique exporté!', 'success');
+        }
+        
+        // Navigation functions
+        function openSwagger() {
+            window.open('/swagger-ui.html', '_blank');
+        }
+        
+        function openDatabase() {
+            window.open('/h2-console', '_blank');
+        }
+        
+        function openGitHub() {
+            window.open('https://github.com', '_blank');
+        }
+        
+        function editMember(id) {
+            window.location.href = `/members?edit=${id}`;
+        }
+        
+        function viewMember(id) {
+            window.location.href = `/members?view=${id}`;
+        }
+        
+        // Modal functions
+        function closeActionModal() {
+            document.getElementById('actionModal').classList.add('hidden');
+        }
+        
+        // Notification function
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 animate__animated animate__fadeInRight ${
+                type === 'success' ? 'bg-green-500' :
+                type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+            } text-white`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check' : 'info'}-circle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('animate__fadeOutRight');
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+        
+        // Mobile menu functions
+        function openMobileMenu() {
+            document.getElementById('mobileMenu').classList.remove('hidden');
+        }
+        
+        function closeMobileMenu() {
+            document.getElementById('mobileMenu').classList.add('hidden');
+        }
+        
+        // Theme toggle
+        function setupEventListeners() {
+            document.getElementById('mobileMenuBtn').addEventListener('click', openMobileMenu);
+            
+            document.getElementById('themeToggle').addEventListener('click', () => {
+                const body = document.getElementById('themeBody');
+                body.classList.toggle('dark');
+                const icon = document.querySelector('#themeToggle i');
+                icon.classList.toggle('fa-moon');
+                icon.classList.toggle('fa-sun');
+                showNotification('Thème modifié', 'info');
+            });
+            
+            // Close notification panel when clicking outside
+            document.addEventListener('click', (event) => {
+                const panel = document.getElementById('notificationPanel');
+                const bell = document.querySelector('.relative.group button');
+                if (panel && !panel.contains(event.target) && !bell.contains(event.target)) {
+                    panel.classList.add('hidden');
+                }
+            });
+        }
+        
+        // Add animate.css classes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInRight {
+                from { opacity: 0; transform: translateX(100%); }
+                to { opacity: 1; transform: translateX(0); }
+            }
+            
+            @keyframes fadeOutRight {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(100%); }
+            }
+            
+            .animate__animated { animation-duration: 0.5s; }
+            .animate__fadeInRight { animation-name: fadeInRight; }
+            .animate__fadeOutRight { animation-name: fadeOutRight; }
+            
+            .spinner-border {
+                display: inline-block;
+                width: 2rem;
+                height: 2rem;
+                border: 0.25em solid currentColor;
+                border-right-color: transparent;
+                border-radius: 50%;
+                animation: spinner-border .75s linear infinite;
+            }
+            
+            @keyframes spinner-border {
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

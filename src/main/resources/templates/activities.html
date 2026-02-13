@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activités Sportives | SportClub Pro</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <style>
+        .activity-card {
+            transition: all 0.3s ease;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .capacity-bar {
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .capacity-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        .calendar-day {
+            transition: all 0.2s ease;
+        }
+        
+        .calendar-day:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .calendar-day.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-3">
+                    <i class="fas fa-running text-2xl"></i>
+                    <span class="text-xl font-bold">SportClub<span class="text-yellow-300">Pro</span></span>
+                </a>
+                <div class="flex items-center space-x-6">
+                    <a href="/" class="hover:text-yellow-300">
+                        <i class="fas fa-home mr-1"></i> Dashboard
+                    </a>
+                    <a href="/members" class="hover:text-yellow-300">
+                        <i class="fas fa-users mr-1"></i> Membres
+                    </a>
+                    <a href="/activities" class="font-bold">
+                        <i class="fas fa-futbol mr-1"></i> Activités
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Activités Sportives</h1>
+            <p class="text-gray-600">Réservez vos sessions et gérez les activités du club</p>
+        </div>
+        
+        <!-- Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-xl p-6 shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Activités Actives</p>
+                        <h3 id="activeActivities" class="text-2xl font-bold">5</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-futbol text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-6 shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Sessions Cette Semaine</p>
+                        <h3 id="weeklySessions" class="text-2xl font-bold">12</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-calendar-alt text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-6 shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Taux de Remplissage</p>
+                        <h3 id="occupancyRate" class="text-2xl font-bold">78%</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filtres -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-gray-800">Filtrer les activités</h2>
+                <div class="flex space-x-3 mt-4 md:mt-0">
+                    <button onclick="showAllActivities()" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200">
+                        Toutes
+                    </button>
+                    <button onclick="filterActivities('sport')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+                        Sports
+                    </button>
+                    <button onclick="filterActivities('fitness')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+                        Fitness
+                    </button>
+                    <button onclick="filterActivities('aquatique')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+                        Aquatique
+                    </button>
+                </div>
+            </div>
+            
+            <div class="relative">
+                <input type="text" id="activitySearch" 
+                       class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                       placeholder="Rechercher une activité..."
+                       onkeyup="searchActivities()">
+                <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
+            </div>
+        </div>
+        
+        <!-- Calendrier -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-gray-800">Calendrier des Sessions</h2>
+                <div class="flex space-x-2">
+                    <button onclick="previousWeek()" class="p-2 hover:bg-gray-100 rounded-lg">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span id="currentWeek" class="font-medium px-4">Semaine en cours</span>
+                    <button onclick="nextWeek()" class="p-2 hover:bg-gray-100 rounded-lg">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <div id="calendar" class="grid grid-cols-8 gap-2 min-w-max">
+                    <!-- Généré dynamiquement -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Liste des activités -->
+        <div id="activitiesContainer">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Activité 1: Football -->
+                <div class="activity-card bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                             alt="Football" class="w-full h-48 object-cover">
+                        <div class="absolute top-4 right-4">
+                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                Populaire
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">⚽ Football</h3>
+                                <p class="text-gray-600">Entraînements et matchs amicaux</p>
+                            </div>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                                25€/mois
+                            </span>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Places disponibles</span>
+                                    <span id="footballCapacity">15/20</span>
+                                </div>
+                                <div class="capacity-bar bg-gray-200">
+                                    <div id="footballBar" class="capacity-fill bg-green-500" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <p class="text-sm text-gray-600 mb-2"><i class="fas fa-user-tie mr-2"></i><strong>Coach:</strong> Jean Dupont</p>
+                                <p class="text-sm text-gray-600"><i class="fas fa-clock mr-2"></i><strong>Prochaine session:</strong> Demain 18h-20h</p>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button onclick="showActivityDetails('football')" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+                                    <i class="fas fa-info-circle mr-2"></i>Détails
+                                </button>
+                                <button onclick="bookActivity('football')" id="bookFootballBtn" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                    <i class="fas fa-calendar-plus mr-2"></i>Réserver
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Activité 2: Basketball -->
+                <div class="activity-card bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                             alt="Basketball" class="w-full h-48 object-cover">
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">🏀 Basketball</h3>
+                                <p class="text-gray-600">Section compétition et loisir</p>
+                            </div>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                                20€/mois
+                            </span>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Places disponibles</span>
+                                    <span id="basketballCapacity">12/15</span>
+                                </div>
+                                <div class="capacity-bar bg-gray-200">
+                                    <div id="basketballBar" class="capacity-fill bg-green-500" style="width: 80%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <p class="text-sm text-gray-600 mb-2"><i class="fas fa-user-tie mr-2"></i><strong>Coach:</strong> Marie Curie</p>
+                                <p class="text-sm text-gray-600"><i class="fas fa-clock mr-2"></i><strong>Prochaine session:</strong> Mercredi 19h-21h</p>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button onclick="showActivityDetails('basketball')" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+                                    <i class="fas fa-info-circle mr-2"></i>Détails
+                                </button>
+                                <button onclick="bookActivity('basketball')" id="bookBasketballBtn" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                    <i class="fas fa-calendar-plus mr-2"></i>Réserver
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Activité 3: Tennis -->
+                <div class="activity-card bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1595435934247-5d33b7f92c70?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                             alt="Tennis" class="w-full h-48 object-cover">
+                        <div class="absolute top-4 right-4">
+                            <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                Complet
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">🎾 Tennis</h3>
+                                <p class="text-gray-600">Cours adultes et enfants</p>
+                            </div>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                                35€/mois
+                            </span>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Places disponibles</span>
+                                    <span id="tennisCapacity">0/10</span>
+                                </div>
+                                <div class="capacity-bar bg-gray-200">
+                                    <div id="tennisBar" class="capacity-fill bg-red-500" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <p class="text-sm text-gray-600 mb-2"><i class="fas fa-user-tie mr-2"></i><strong>Coach:</strong> Pierre Martin</p>
+                                <p class="text-sm text-gray-600"><i class="fas fa-clock mr-2"></i><strong>Prochaine session:</strong> Samedi 10h-12h</p>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button onclick="showActivityDetails('tennis')" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+                                    <i class="fas fa-info-circle mr-2"></i>Détails
+                                </button>
+                                <button onclick="joinWaitlist('tennis')" class="flex-1 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
+                                    <i class="fas fa-clock mr-2"></i>Liste d'attente
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Plus d'activités... -->
+            </div>
+        </div>
+        
+        <!-- Bouton Ajouter Activité -->
+        <div class="mt-8 text-center">
+            <button onclick="showAddActivityModal()" class="px-8 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg hover:opacity-90 font-medium">
+                <i class="fas fa-plus mr-2"></i> Proposer une nouvelle activité
+            </button>
+        </div>
+    </main>
+    
+    <!-- Modal Réservation -->
+    <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="bookingTitle" class="text-xl font-bold text-gray-900">Réserver une session</h3>
+                    <button onclick="closeBookingModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div id="bookingContent">
+                    <!-- Contenu dynamique -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Détails Activité -->
+    <div id="activityModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 id="activityModalTitle" class="text-2xl font-bold text-gray-900"></h3>
+                    <button onclick="closeActivityModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div id="activityModalContent">
+                    <!-- Contenu dynamique -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentActivity = null;
+        let currentWeek = 0;
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            generateCalendar();
+            updateActivityStats();
+            
+            // Vérifier les réservations existantes
+            checkExistingBookings();
+        });
+        
+        // Générer le calendrier
+        function generateCalendar() {
+            const container = document.getElementById('calendar');
+            const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+            const today = new Date();
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay() + 1 + (currentWeek * 7));
+            
+            // En-têtes
+            container.innerHTML = '<div class="font-bold text-gray-500 text-center py-2">Heure</div>';
+            days.forEach(day => {
+                const date = new Date(startOfWeek);
+                date.setDate(startOfWeek.getDate() + days.indexOf(day));
+                container.innerHTML += `
+                    <div class="font-bold text-gray-700 text-center py-2">
+                        ${day}<br>
+                        <span class="text-sm font-normal">${date.getDate()}/${date.getMonth() + 1}</span>
+                    </div>
+                `;
+            });
+            
+            // Créneaux horaires
+            const timeSlots = ['08:00', '10:00', '14:00', '16:00', '18:00', '20:00'];
+            timeSlots.forEach(time => {
+                container.innerHTML += `<div class="text-gray-500 text-right pr-2 py-3 border-t">${time}</div>`;
+                
+                days.forEach((day, dayIndex) => {
+                    const date = new Date(startOfWeek);
+                    date.setDate(startOfWeek.getDate() + dayIndex);
+                    const activities = getActivitiesForTimeSlot(date, time);
+                    
+                    let cellContent = '';
+                    if (activities.length > 0) {
+                        const activity = activities[0];
+                        cellContent = `
+                            <div class="activity-slot p-2 rounded ${getActivityColor(activity.type)} text-white text-xs cursor-pointer"
+                                 onclick="showTimeSlotDetails('${time}', ${dayIndex}, '${activity.name}')">
+                                <div class="font-bold">${activity.name}</div>
+                                <div>${activity.coach}</div>
+                            </div>
+                        `;
+                    }
+                    
+                    container.innerHTML += `<div class="border-t p-1 min-h-[60px] calendar-day">${cellContent}</div>`;
+                });
+            });
+            
+            // Mettre à jour l'affichage de la semaine
+            const weekStart = new Date(startOfWeek);
+            const weekEnd = new Date(startOfWeek);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            document.getElementById('currentWeek').textContent = 
+                `${weekStart.getDate()}/${weekStart.getMonth() + 1} - ${weekEnd.getDate()}/${weekEnd.getMonth() + 1}`;
+        }
+        
+        function getActivitiesForTimeSlot(date, time) {
+            // Simulation - en réalité, appeler l'API
+            const activities = [];
+            const day = date.getDay();
+            
+            if (time === '18:00' && (day === 1 || day === 3)) {
+                activities.push({ name: 'Football', coach: 'Jean D.', type: 'sport' });
+            }
+            if (time === '19:00' && (day === 2 || day === 4)) {
+                activities.push({ name: 'Basketball', coach: 'Marie C.', type: 'sport' });
+            }
+            if (time === '10:00' && day === 6) {
+                activities.push({ name: 'Tennis', coach: 'Pierre M.', type: 'sport' });
+            }
+            
+            return activities;
+        }
+        
+        function getActivityColor(type) {
+            switch(type) {
+                case 'sport': return 'bg-blue-500';
+                case 'fitness': return 'bg-green-500';
+                case 'aquatique': return 'bg-purple-500';
+                default: return 'bg-gray-500';
+            }
+        }
+        
+        // Navigation calendrier
+        function previousWeek() {
+            currentWeek--;
+            generateCalendar();
+        }
+        
+        function nextWeek() {
+            currentWeek++;
+            generateCalendar();
+        }
+        
+        // Gestion des activités
+        function showActivityDetails(activity) {
+            currentActivity = activity;
+            let details = {};
+            
+            switch(activity) {
+                case 'football':
+                    details = {
+                        title: 'Football',
+                        description: 'Entraînements de football pour tous les niveaux. Sessions techniques, tactiques et matchs amicaux.',
+                        schedule: 'Lundi et Jeudi: 18h-20h<br>Mercredi: 19h-21h',
+                        equipment: 'Chaussures de football, protège-tibias',
+                        level: 'Tous niveaux',
+                        maxParticipants: 20,
+                        currentParticipants: 15,
+                        price: '25€/mois ou 8€/session'
+                    };
+                    break;
+                case 'basketball':
+                    details = {
+                        title: 'Basketball',
+                        description: 'Section basketball avec entraînements techniques et matchs hebdomadaires.',
+                        schedule: 'Mardi et Jeudi: 19h-21h',
+                        equipment: 'Baskets, tenue de sport',
+                        level: 'Intermédiaire',
+                        maxParticipants: 15,
+                        currentParticipants: 12,
+                        price: '20€/mois ou 7€/session'
+                    };
+                    break;
+                case 'tennis':
+                    details = {
+                        title: 'Tennis',
+                        description: 'Cours collectifs et individuels. Matériel fourni pour les débutants.',
+                        schedule: 'Mercredi: 16h-18h<br>Samedi: 10h-12h',
+                        equipment: 'Raquette (peut être louée)',
+                        level: 'Débutant à avancé',
+                        maxParticipants: 10,
+                        currentParticipants: 10,
+                        price: '35€/mois ou 12€/session'
+                    };
+                    break;
+            }
+            
+            document.getElementById('activityModalTitle').textContent = details.title;
+            document.getElementById('activityModalContent').innerHTML = `
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="font-bold text-gray-700 mb-2">Description</h4>
+                        <p class="text-gray-600">${details.description}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-2">Horaires</h4>
+                            <p class="text-gray-600">${details.schedule}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-2">Équipement</h4>
+                            <p class="text-gray-600">${details.equipment}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-2">Niveau</h4>
+                            <p class="text-gray-600">${details.level}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-2">Participants</h4>
+                            <p class="text-gray-600">${details.currentParticipants}/${details.maxParticipants}</p>
+                            <div class="capacity-bar bg-gray-200 mt-1">
+                                <div class="capacity-fill ${details.currentParticipants === details.maxParticipants ? 'bg-red-500' : 'bg-green-500'}" 
+                                     style="width: ${(details.currentParticipants/details.maxParticipants)*100}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-gray-700 mb-2">Tarifs</h4>
+                        <p class="text-gray-600">${details.price}</p>
+                    </div>
+                    
+                    <div class="flex space-x-3 pt-4 border-t">
+                        <button onclick="bookActivity('${activity}')" 
+                                class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ${details.currentParticipants === details.maxParticipants ? 'opacity-50 cursor-not-allowed' : ''}"
+                                ${details.currentParticipants === details.maxParticipants ? 'disabled' : ''}>
+                            <i class="fas fa-calendar-plus mr-2"></i>Réserver maintenant
+                        </button>
+                        <button onclick="closeActivityModal()" 
+                                class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('activityModal').classList.remove('hidden');
+        }
+        
+        function bookActivity(activity) {
+            currentActivity = activity;
+            
+            let activityName, availableSlots;
+            switch(activity) {
+                case 'football':
+                    activityName = 'Football';
+                    availableSlots = [
+                        { date: 'Demain', time: '18h-20h', coach: 'Jean Dupont' },
+                        { date: 'Jeudi', time: '18h-20h', coach: 'Jean Dupont' },
+                        { date: 'Mercredi', time: '19h-21h', coach: 'Assistant' }
+                    ];
+                    break;
+                case 'basketball':
+                    activityName = 'Basketball';
+                    availableSlots = [
+                        { date: 'Mardi', time: '19h-21h', coach: 'Marie Curie' },
+                        { date: 'Jeudi', time: '19h-21h', coach: 'Marie Curie' }
+                    ];
+                    break;
+                case 'tennis':
+                    activityName = 'Tennis';
+                    availableSlots = [
+                        { date: 'Samedi', time: '10h-12h', coach: 'Pierre Martin' }
+                    ];
+                    break;
+            }
+            
+            document.getElementById('bookingTitle').textContent = `Réserver - ${activityName}`;
+            
+            let slotsHTML = '';
+            availableSlots.forEach((slot, index) => {
+                slotsHTML += `
+                    <div class="border rounded-lg p-4 mb-3 hover:border-blue-500 cursor-pointer" 
+                         onclick="selectTimeSlot(${index})" id="slot${index}">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-medium">${slot.date} • ${slot.time}</div>
+                                <div class="text-sm text-gray-600">Coach: ${slot.coach}</div>
+                            </div>
+                            <div class="text-green-600 font-medium">Disponible</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('bookingContent').innerHTML = `
+                <div class="space-y-4">
+                    <p class="text-gray-600">Sélectionnez un créneau horaire:</p>
+                    
+                    ${slotsHTML}
+                    
+                    <div id="selectedSlotInfo" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-bold text-blue-800 mb-2">Créneau sélectionné</h4>
+                        <p id="selectedSlotDetails" class="text-blue-700"></p>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4 border-t">
+                        <button onclick="closeBookingModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                            Annuler
+                        </button>
+                        <button onclick="confirmBooking()" id="confirmBookingBtn" 
+                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 opacity-50 cursor-not-allowed" disabled>
+                            <i class="fas fa-check mr-2"></i>Confirmer la réservation
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('bookingModal').classList.remove('hidden');
+        }
+        
+        function selectTimeSlot(index) {
+            // Réinitialiser toutes les sélections
+            for (let i = 0; i < 5; i++) {
+                const slot = document.getElementById(`slot${i}`);
+                if (slot) {
+                    slot.classList.remove('border-blue-500', 'bg-blue-50');
+                }
+            }
+            
+            // Activer la sélection courante
+            const selectedSlot = document.getElementById(`slot${index}`);
+            selectedSlot.classList.add('border-blue-500', 'bg-blue-50');
+            
+            // Afficher les détails
+            document.getElementById('selectedSlotInfo').classList.remove('hidden');
+            document.getElementById('selectedSlotDetails').textContent = 
+                `Vous avez sélectionné le créneau: ${selectedSlot.querySelector('.font-medium').textContent}`;
+            
+            // Activer le bouton de confirmation
+            document.getElementById('confirmBookingBtn').disabled = false;
+            document.getElementById('confirmBookingBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+        
+        function confirmBooking() {
+            const selectedSlot = document.querySelector('.border-blue-500');
+            if (!selectedSlot) return;
+            
+            const slotDetails = selectedSlot.querySelector('.font-medium').textContent;
+            showNotification(`Réservation confirmée pour ${currentActivity} (${slotDetails})`, 'success');
+            
+            // Mettre à jour la capacité
+            updateCapacity(currentActivity, 1);
+            
+            // Désactiver le bouton si complet
+            const button = document.getElementById(`book${capitalizeFirstLetter(currentActivity)}Btn`);
+            if (button) {
+                const capacityText = document.getElementById(`${currentActivity}Capacity`).textContent;
+                const [current, max] = capacityText.split('/').map(Number);
+                if (current + 1 >= max) {
+                    button.disabled = true;
+                    button.classList.add('opacity-50', 'cursor-not-allowed');
+                    button.textContent = 'Complet';
+                }
+            }
+            
+            closeBookingModal();
+        }
+        
+        function joinWaitlist(activity) {
+            showNotification(`Ajouté à la liste d'attente pour ${activity}`, 'info');
+            
+            // Simuler l'ajout à la liste d'attente
+            setTimeout(() => {
+                showNotification(`Une place s'est libérée pour ${activity}!`, 'success');
+            }, 5000);
+        }
+        
+        function updateCapacity(activity, change) {
+            const capacityElement = document.getElementById(`${activity}Capacity`);
+            const barElement = document.getElementById(`${activity}Bar`);
+            
+            if (capacityElement && barElement) {
+                const [current, max] = capacityElement.textContent.split('/').map(Number);
+                const newCurrent = Math.max(0, Math.min(current + change, max));
+                
+                capacityElement.textContent = `${newCurrent}/${max}`;
+                const percentage = (newCurrent / max) * 100;
+                barElement.style.width = `${percentage}%`;
+                
+                // Changer la couleur si nécessaire
+                if (newCurrent >= max) {
+                    barElement.classList.remove('bg-green-500');
+                    barElement.classList.add('bg-red-500');
+                } else if (percentage > 80) {
+                    barElement.classList.remove('bg-green-500');
+                    barElement.classList.add('bg-yellow-500');
+                } else {
+                    barElement.classList.remove('bg-red-500', 'bg-yellow-500');
+                    barElement.classList.add('bg-green-500');
+                }
+            }
+        }
+        
+        function checkExistingBookings() {
+            // Vérifier les réservations existantes (simulation)
+            // En réalité, appeler l'API pour vérifier
+            const today = new Date();
+            if (today.getDay() === 2 || today.getDay() === 4) { // Mardi ou Jeudi
+                showNotification('Rappel: Vous avez basketball ce soir à 19h', 'info');
+            }
+        }
+        
+        function showTimeSlotDetails(time, dayIndex, activityName) {
+            const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+            showNotification(`${activityName} le ${days[dayIndex]} à ${time}`, 'info');
+        }
+        
+        function showAddActivityModal() {
+            showNotification('Fonctionnalité en développement', 'info');
+            // Implémenter un formulaire pour ajouter une nouvelle activité
+        }
+        
+        // Filtres
+        function showAllActivities() {
+            const activities = document.querySelectorAll('.activity-card');
+            activities.forEach(activity => activity.classList.remove('hidden'));
+        }
+        
+        function filterActivities(type) {
+            const activities = document.querySelectorAll('.activity-card');
+            // Dans une implémentation réelle, filtrer par type
+            showNotification(`Filtrage des activités ${type}`, 'info');
+        }
+        
+        function searchActivities() {
+            const searchTerm = document.getElementById('activitySearch').value.toLowerCase();
+            const activities = document.querySelectorAll('.activity-card');
+            
+            activities.forEach(activity => {
+                const title = activity.querySelector('h3').textContent.toLowerCase();
+                const description = activity.querySelector('p').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    activity.classList.remove('hidden');
+                } else {
+                    activity.classList.add('hidden');
+                }
+            });
+        }
+        
+        function updateActivityStats() {
+            // Simulation de stats
+            document.getElementById('weeklySessions').textContent = '12';
+            document.getElementById('occupancyRate').textContent = '78%';
+        }
+        
+        // Utilitaires
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+        
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
+        }
+        
+        function closeActivityModal() {
+            document.getElementById('activityModal').classList.add('hidden');
+        }
+        
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500',
+                warning: 'bg-yellow-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg text-white ${colors[type]}`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-triangle' : 'info'}-circle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

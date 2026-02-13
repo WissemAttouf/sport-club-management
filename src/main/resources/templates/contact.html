@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact & Support | SportClub Pro</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <style>
+        .contact-card {
+            transition: all 0.3s ease;
+        }
+        
+        .contact-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .map-container {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-3">
+                    <i class="fas fa-running text-2xl"></i>
+                    <span class="text-xl font-bold">SportClub<span class="text-yellow-300">Pro</span></span>
+                </a>
+                <div class="flex items-center space-x-6">
+                    <a href="/" class="hover:text-yellow-300">
+                        <i class="fas fa-home mr-1"></i> Dashboard
+                    </a>
+                    <a href="/members" class="hover:text-yellow-300">
+                        <i class="fas fa-users mr-1"></i> Membres
+                    </a>
+                    <a href="/contact" class="font-bold">
+                        <i class="fas fa-envelope mr-1"></i> Contact
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Contact & Support</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Nous sommes là pour vous aider. Contactez-nous pour toute question sur votre club sportif.
+            </p>
+        </div>
+        
+        <!-- Stats de support -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-white rounded-xl p-6 shadow text-center">
+                <div class="text-3xl font-bold text-green-600 mb-2">24h</div>
+                <div class="text-gray-600">Temps de réponse moyen</div>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow text-center">
+                <div class="text-3xl font-bold text-blue-600 mb-2">98%</div>
+                <div class="text-gray-600">Satisfaction client</div>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow text-center">
+                <div class="text-3xl font-bold text-purple-600 mb-2">1000+</div>
+                <div class="text-gray-600">Clubs accompagnés</div>
+            </div>
+        </div>
+        
+        <!-- Cartes de contact -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <!-- Support Technique -->
+            <div class="contact-card bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-headset text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Support Technique</h3>
+                        <p class="text-gray-600">Problèmes techniques & bugs</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-phone mr-3 w-5"></i>
+                        <span>01 23 45 67 89</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-envelope mr-3 w-5"></i>
+                        <span>support@sportclub.fr</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-clock mr-3 w-5"></i>
+                        <span>9h-18h, Lun-Ven</span>
+                    </div>
+                </div>
+                <button onclick="startLiveChat('technique')" class="w-full mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    <i class="fas fa-comments mr-2"></i>Chat en direct
+                </button>
+            </div>
+            
+            <!-- Support Commercial -->
+            <div class="contact-card bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-handshake text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Support Commercial</h3>
+                        <p class="text-gray-600">Devis & questions commerciales</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-phone mr-3 w-5"></i>
+                        <span>01 98 76 54 32</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-envelope mr-3 w-5"></i>
+                        <span>commercial@sportclub.fr</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-clock mr-3 w-5"></i>
+                        <span>8h-19h, Lun-Sam</span>
+                    </div>
+                </div>
+                <button onclick="startLiveChat('commercial')" class="w-full mt-6 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                    <i class="fas fa-comments mr-2"></i>Chat en direct
+                </button>
+            </div>
+            
+            <!-- Urgences -->
+            <div class="contact-card bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Urgences</h3>
+                        <p class="text-gray-600">Problèmes critiques système</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-phone mr-3 w-5"></i>
+                        <span class="font-bold">06 12 34 56 78</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-envelope mr-3 w-5"></i>
+                        <span>urgent@sportclub.fr</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-clock mr-3 w-5"></i>
+                        <span>24h/24, 7j/7</span>
+                    </div>
+                </div>
+                <button onclick="callEmergency()" class="w-full mt-6 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                    <i class="fas fa-phone mr-2"></i>Appeler l'urgence
+                </button>
+            </div>
+        </div>
+        
+        <!-- Formulaire de contact -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+            <!-- Formulaire -->
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Envoyez-nous un message</h2>
+                
+                <form id="contactForm" onsubmit="submitContactForm(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Prénom <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="firstName" required
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Nom <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="lastName" required
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Email <span class="text-red-500">*</span>
+                        </label>
+                        <input type="email" id="email" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Téléphone
+                        </label>
+                        <input type="tel" id="phone"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Sujet <span class="text-red-500">*</span>
+                        </label>
+                        <select id="subject" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Sélectionnez un sujet</option>
+                            <option value="technical">Problème technique</option>
+                            <option value="billing">Facturation</option>
+                            <option value="feature">Nouvelle fonctionnalité</option>
+                            <option value="partnership">Partenariat</option>
+                            <option value="other">Autre</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Message <span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="message" rows="6" required
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="newsletter" class="w-4 h-4 text-blue-600 rounded">
+                        <label for="newsletter" class="ml-2 text-sm text-gray-600">
+                            S'abonner à la newsletter (conseils de gestion de club)
+                        </label>
+                    </div>
+                    
+                    <div>
+                        <button type="submit" id="submitBtn" 
+                                class="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:opacity-90 font-medium">
+                            <span id="submitText">Envoyer le message</span>
+                            <i class="fas fa-spinner fa-spin ml-2 hidden" id="submitSpinner"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Informations & Carte -->
+            <div class="space-y-8">
+                <!-- Informations -->
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Informations de contact</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fas fa-map-marker-alt text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-700 mb-1">Adresse</h3>
+                                <p class="text-gray-600">123 Rue du Sport<br>75000 Paris<br>France</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fas fa-clock text-green-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-700 mb-1">Horaires d'ouverture</h3>
+                                <p class="text-gray-600">
+                                    <strong>Support technique:</strong> 9h-18h (Lun-Ven)<br>
+                                    <strong>Support commercial:</strong> 8h-19h (Lun-Sam)<br>
+                                    <strong>Urgences:</strong> 24h/24, 7j/7
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fas fa-globe text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-700 mb-1">Réseaux sociaux</h3>
+                                <div class="flex space-x-4 mt-2">
+                                    <button onclick="openSocial('twitter')" class="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600">
+                                        <i class="fab fa-twitter"></i>
+                                    </button>
+                                    <button onclick="openSocial('linkedin')" class="w-10 h-10 bg-blue-700 text-white rounded-full flex items-center justify-center hover:bg-blue-800">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </button>
+                                    <button onclick="openSocial('facebook')" class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </button>
+                                    <button onclick="openSocial('instagram')" class="w-10 h-10 bg-pink-600 text-white rounded-full flex items-center justify-center hover:bg-pink-700">
+                                        <i class="fab fa-instagram"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Carte (simulée) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-6 border-b">
+                        <h3 class="text-xl font-bold text-gray-800">Notre localisation</h3>
+                    </div>
+                    <div class="map-container h-64 bg-gradient-to-r from-blue-400 to-blue-600 relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <i class="fas fa-map-marker-alt text-4xl mb-4"></i>
+                                <p class="text-xl font-bold">Paris, France</p>
+                                <p class="opacity-90">123 Rue du Sport</p>
+                            </div>
+                        </div>
+                        <!-- Dans une version réelle, intégrer Google Maps -->
+                        <div class="absolute bottom-4 right-4">
+                            <button onclick="openGoogleMaps()" class="px-4 py-2 bg-white text-gray-800 rounded-lg shadow hover:bg-gray-100">
+                                <i class="fas fa-external-link-alt mr-2"></i>Ouvrir dans Google Maps
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FAQ -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Questions fréquentes</h2>
+            
+            <div class="space-y-4">
+                <div class="border rounded-lg overflow-hidden">
+                    <button onclick="toggleFAQ(1)" class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                        <span class="font-medium text-gray-800">Comment réinitialiser mon mot de passe administrateur ?</span>
+                        <i class="fas fa-chevron-down text-gray-400"></i>
+                    </button>
+                    <div id="faq1" class="px-6 py-4 border-t hidden">
+                        <p class="text-gray-600">
+                            Contactez le support technique par email à support@sportclub.fr avec votre nom d'utilisateur. 
+                            Nous vous enverrons un lien de réinitialisation sous 30 minutes.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="border rounded-lg overflow-hidden">
+                    <button onclick="toggleFAQ(2)" class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                        <span class="font-medium text-gray-800">Comment exporter mes données membres ?</span>
+                        <i class="fas fa-chevron-down text-gray-400"></i>
+                    </button>
+                    <div id="faq2" class="px-6 py-4 border-t hidden">
+                        <p class="text-gray-600">
+                            Dans la page "Gestion des Membres", cliquez sur le bouton "Exporter" en haut à droite. 
+                            Vous pouvez choisir entre CSV, Excel ou PDF. L'export inclut toutes les informations des membres.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="border rounded-lg overflow-hidden">
+                    <button onclick="toggleFAQ(3)" class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                        <span class="font-medium text-gray-800">Puis-je personnaliser l'interface pour mon club ?</span>
+                        <i class="fas fa-chevron-down text-gray-400"></i>
+                    </button>
+                    <div id="faq3" class="px-6 py-4 border-t hidden">
+                        <p class="text-gray-600">
+                            Oui ! Contactez le support commercial pour activer les options de personnalisation. 
+                            Vous pouvez changer les couleurs, logos, et ajouter votre propre branding.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Boutons d'action rapide -->
+        <div class="text-center">
+            <div class="inline-flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6">
+                <button onclick="scheduleCall()" class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                    <i class="fas fa-calendar-alt mr-2"></i>Planifier un appel
+                </button>
+                <button onclick="downloadDocumentation()" class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">
+                    <i class="fas fa-download mr-2"></i>Télécharger la documentation
+                </button>
+                <button onclick="openKnowledgeBase()" class="px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium">
+                    <i class="fas fa-book mr-2"></i>Base de connaissances
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Modal Chat -->
+    <div id="chatModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="chatTitle" class="text-xl font-bold text-gray-900">Chat en direct</h3>
+                    <button onclick="closeChatModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div id="chatContent">
+                    <!-- Contenu dynamique -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Planifier appel -->
+    <div id="scheduleModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-900">Planifier un appel</h3>
+                    <button onclick="closeScheduleModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sujet</label>
+                        <input type="text" id="callSubject" 
+                               class="w-full px-3 py-2 border rounded-lg" 
+                               placeholder="Ex: Migration des données">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                        <input type="date" id="callDate" 
+                               class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Heure</label>
+                        <select id="callTime" class="w-full px-3 py-2 border rounded-lg">
+                            <option value="09:00">09:00 - 10:00</option>
+                            <option value="10:00">10:00 - 11:00</option>
+                            <option value="11:00">11:00 - 12:00</option>
+                            <option value="14:00">14:00 - 15:00</option>
+                            <option value="15:00">15:00 - 16:00</option>
+                            <option value="16:00">16:00 - 17:00</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button onclick="closeScheduleModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                            Annuler
+                        </button>
+                        <button onclick="confirmSchedule()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            <i class="fas fa-calendar-check mr-2"></i>Planifier
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentChatType = '';
+        
+        // Gestion du formulaire de contact
+        async function submitContactForm(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const spinner = document.getElementById('submitSpinner');
+            
+            // Récupérer les données du formulaire
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value,
+                newsletter: document.getElementById('newsletter').checked,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Changer l'état du bouton
+            submitText.textContent = 'Envoi en cours...';
+            spinner.classList.remove('hidden');
+            submitBtn.disabled = true;
+            
+            try {
+                // Dans une implémentation réelle, envoyer à votre API
+                // await axios.post('/api/contact', formData);
+                
+                // Simulation d'envoi réussi
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Afficher le succès
+                showNotification('Message envoyé avec succès ! Nous vous répondrons sous 24h.', 'success');
+                
+                // Réinitialiser le formulaire
+                document.getElementById('contactForm').reset();
+                
+                // Envoyer une confirmation par email (simulation)
+                if (formData.newsletter) {
+                    setTimeout(() => {
+                        showNotification('Vous êtes maintenant inscrit à notre newsletter !', 'info');
+                    }, 500);
+                }
+                
+            } catch (error) {
+                showNotification('Erreur lors de l\'envoi du message. Veuillez réessayer.', 'error');
+            } finally {
+                // Restaurer le bouton
+                submitText.textContent = 'Envoyer le message';
+                spinner.classList.add('hidden');
+                submitBtn.disabled = false;
+            }
+        }
+        
+        // Chat en direct
+        function startLiveChat(type) {
+            currentChatType = type;
+            
+            let title = '';
+            let initialMessage = '';
+            
+            switch(type) {
+                case 'technique':
+                    title = 'Support Technique';
+                    initialMessage = 'Bonjour ! Je suis ici pour vous aider avec vos problèmes techniques. Décrivez-moi votre problème.';
+                    break;
+                case 'commercial':
+                    title = 'Support Commercial';
+                    initialMessage = 'Bonjour ! Je peux vous aider avec vos questions commerciales et vos devis. Comment puis-je vous aider ?';
+                    break;
+            }
+            
+            document.getElementById('chatTitle').textContent = title;
+            document.getElementById('chatContent').innerHTML = `
+                <div class="space-y-4 mb-6">
+                    <div class="flex">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                            <i class="fas fa-robot text-blue-600"></i>
+                        </div>
+                        <div class="bg-gray-100 rounded-lg p-4">
+                            <p class="text-gray-800">${initialMessage}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex">
+                    <input type="text" id="chatInput" 
+                           class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="Tapez votre message...">
+                    <button onclick="sendChatMessage()" 
+                            class="px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <button onclick="connectToAgent()" class="text-sm text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-user mr-1"></i>Parler à un agent humain
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('chatModal').classList.remove('hidden');
+        }
+        
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Ajouter le message de l'utilisateur
+            const chatContainer = document.querySelector('#chatContent .space-y-4');
+            chatContainer.innerHTML += `
+                <div class="flex justify-end">
+                    <div class="bg-blue-100 rounded-lg p-4 max-w-xs">
+                        <p class="text-gray-800">${message}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Simuler une réponse automatique
+            setTimeout(() => {
+                let response = '';
+                
+                if (message.toLowerCase().includes('bug') || message.toLowerCase().includes('erreur')) {
+                    response = 'Je comprends que vous rencontrez un problème. Pouvez-vous me décrire précisément les étapes pour reproduire ce bug ?';
+                } else if (message.toLowerCase().includes('prix') || message.toLowerCase().includes('tarif')) {
+                    response = 'Je peux vous envoyer notre grille tarifaire complète. Souhaitez-vous la recevoir par email ?';
+                } else if (message.toLowerCase().includes('fonction') || message.toLowerCase().includes('feature')) {
+                    response = 'Nous développons constamment de nouvelles fonctionnalités. Laquelle vous intéresse particulièrement ?';
+                } else {
+                    response = 'Merci pour votre message. Je vais traiter votre demande et vous répondre dans les plus brefs délais.';
+                }
+                
+                chatContainer.innerHTML += `
+                    <div class="flex">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                            <i class="fas fa-robot text-blue-600"></i>
+                        </div>
+                        <div class="bg-gray-100 rounded-lg p-4">
+                            <p class="text-gray-800">${response}</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Faire défiler vers le bas
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 1000);
+            
+            input.value = '';
+            input.focus();
+        }
+        
+        function connectToAgent() {
+            const chatContainer = document.querySelector('#chatContent .space-y-4');
+            chatContainer.innerHTML += `
+                <div class="flex">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <i class="fas fa-user text-green-600"></i>
+                    </div>
+                    <div class="bg-gray-100 rounded-lg p-4">
+                        <p class="text-gray-800">Un agent humain va prendre en charge votre conversation. Veuillez patienter quelques instants...</p>
+                    </div>
+                </div>
+            `;
+            
+            // Simuler la connexion à un agent
+            setTimeout(() => {
+                chatContainer.innerHTML += `
+                    <div class="flex">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                            <i class="fas fa-user-tie text-green-600"></i>
+                        </div>
+                        <div class="bg-gray-100 rounded-lg p-4">
+                            <p class="text-gray-800">Bonjour, je suis Sophie, votre conseillère. Comment puis-je vous aider aujourd'hui ?</p>
+                        </div>
+                    </div>
+                `;
+            }, 2000);
+        }
+        
+        function closeChatModal() {
+            document.getElementById('chatModal').classList.add('hidden');
+        }
+        
+        // Urgences
+        function callEmergency() {
+            if (confirm('Composer le numéro d\'urgence 06 12 34 56 78 ?')) {
+                showNotification('Appel en cours vers le support d\'urgence...', 'info');
+                // Dans une vraie application, utiliser tel: lien
+                // window.location.href = 'tel:+33612345678';
+            }
+        }
+        
+        // Planifier un appel
+        function scheduleCall() {
+            // Définir la date par défaut à demain
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('callDate').value = tomorrow.toISOString().split('T')[0];
+            
+            document.getElementById('scheduleModal').classList.remove('hidden');
+        }
+        
+        function closeScheduleModal() {
+            document.getElementById('scheduleModal').classList.add('hidden');
+        }
+        
+        function confirmSchedule() {
+            const subject = document.getElementById('callSubject').value;
+            const date = document.getElementById('callDate').value;
+            const time = document.getElementById('callTime').value;
+            
+            if (!subject || !date || !time) {
+                showNotification('Veuillez remplir tous les champs', 'warning');
+                return;
+            }
+            
+            // Simuler l'envoi de la demande
+            showNotification(`Appel planifié pour le ${date} à ${time} : "${subject}"`, 'success');
+            closeScheduleModal();
+            
+            // Envoyer une confirmation (simulation)
+            setTimeout(() => {
+                showNotification('Un email de confirmation vous a été envoyé', 'info');
+            }, 1000);
+        }
+        
+        // Téléchargement documentation
+        function downloadDocumentation() {
+            showNotification('Téléchargement de la documentation en cours...', 'info');
+            
+            // Simuler le téléchargement
+            setTimeout(() => {
+                const content = `Documentation SportClub Pro\nVersion 1.0.0\n\n1. Installation\n2. Configuration\n3. Guide d'utilisation\n4. FAQ\n\n© 2024 SportClub Pro`;
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'documentation-sportclub-pro.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification('Documentation téléchargée avec succès!', 'success');
+            }, 1500);
+        }
+        
+        // Base de connaissances
+        function openKnowledgeBase() {
+            showNotification('Ouverture de la base de connaissances...', 'info');
+            // Dans une version réelle, rediriger vers la base de connaissances
+            window.open('#', '_blank');
+        }
+        
+        // Réseaux sociaux
+        function openSocial(platform) {
+            const urls = {
+                twitter: 'https://twitter.com/sportclub',
+                linkedin: 'https://linkedin.com/company/sportclub',
+                facebook: 'https://facebook.com/sportclub',
+                instagram: 'https://instagram.com/sportclub'
+            };
+            
+            showNotification(`Ouverture de ${platform}...`, 'info');
+            // window.open(urls[platform], '_blank');
+        }
+        
+        function openGoogleMaps() {
+            showNotification('Ouverture de Google Maps...', 'info');
+            // window.open('https://maps.google.com/?q=123+Rue+du+Sport+Paris+France', '_blank');
+        }
+        
+        // FAQ
+        function toggleFAQ(id) {
+            const faq = document.getElementById(`faq${id}`);
+            const button = faq.previousElementSibling;
+            const icon = button.querySelector('i');
+            
+            faq.classList.toggle('hidden');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        }
+        
+        // Notifications
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500',
+                warning: 'bg-yellow-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg text-white ${colors[type]} animate__animated animate__fadeInRight`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-triangle' : 'info'}-circle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('animate__fadeOutRight');
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+        
+        // Ajouter les styles d'animation
+        const style = document.createElement('style');
+        style.textContent = `
+            .animate__animated {
+                animation-duration: 0.5s;
+            }
+            
+            @keyframes fadeInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            @keyframes fadeOutRight {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+            }
+            
+            .animate__fadeInRight {
+                animation-name: fadeInRight;
+            }
+            
+            .animate__fadeOutRight {
+                animation-name: fadeOutRight;
+            }
+            
+            .fa-spin {
+                animation: fa-spin 1s linear infinite;
+            }
+            
+            @keyframes fa-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pré-remplir le formulaire avec des données de test (optionnel)
+            document.getElementById('firstName').value = 'Jean';
+            document.getElementById('lastName').value = 'Dupont';
+            document.getElementById('email').value = 'jean.dupont@example.com';
+            document.getElementById('phone').value = '0612345678';
+            document.getElementById('subject').value = 'technical';
+            document.getElementById('message').value = 'Bonjour, je rencontre un problème technique avec...';
+            
+            // Afficher un message de bienvenue
+            setTimeout(() => {
+                showNotification('Bienvenue sur notre page de contact !', 'info');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Membres | SportClub Pro</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <style>
+        .member-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .member-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #3b82f6;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-active { background-color: #10b98120; color: #10b981; }
+        .status-inactive { background-color: #ef444420; color: #ef4444; }
+        .status-pending { background-color: #f59e0b20; color: #f59e0b; }
+        
+        .avatar-gradient {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .filter-pill {
+            transition: all 0.2s ease;
+        }
+        
+        .filter-pill:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation (simplifiée) -->
+    <nav class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-3">
+                    <i class="fas fa-running text-2xl"></i>
+                    <span class="text-xl font-bold">SportClub<span class="text-yellow-300">Pro</span></span>
+                </a>
+                <div class="flex items-center space-x-6">
+                    <a href="/" class="hover:text-yellow-300">
+                        <i class="fas fa-home mr-1"></i> Dashboard
+                    </a>
+                    <a href="/members" class="font-bold">
+                        <i class="fas fa-users mr-1"></i> Membres
+                    </a>
+                    <a href="/activities" class="hover:text-yellow-300">
+                        <i class="fas fa-futbol mr-1"></i> Activités
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Gestion des Membres</h1>
+                    <p class="text-gray-600 mt-2">Gérez votre communauté sportive</p>
+                </div>
+                <div class="flex items-center space-x-3 mt-4 md:mt-0">
+                    <button onclick="exportToCSV()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
+                        <i class="fas fa-file-export mr-2"></i> Exporter
+                    </button>
+                    <button onclick="showAddMemberModal()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center">
+                        <i class="fas fa-user-plus mr-2"></i> Nouveau Membre
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-lg p-4 shadow">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500">Total</p>
+                            <h3 id="totalMembers" class="text-2xl font-bold">0</h3>
+                        </div>
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-users text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg p-4 shadow">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500">Actifs</p>
+                            <h3 id="activeMembers" class="text-2xl font-bold">0</h3>
+                        </div>
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-check text-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg p-4 shadow">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500">Inactifs</p>
+                            <h3 id="inactiveMembers" class="text-2xl font-bold">0</h3>
+                        </div>
+                        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-slash text-red-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg p-4 shadow">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500">En attente</p>
+                            <h3 id="pendingMembers" class="text-2xl font-bold">0</h3>
+                        </div>
+                        <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-clock text-yellow-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filtres -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-800 mb-2 md:mb-0">Filtres</h2>
+                <div class="flex items-center space-x-3">
+                    <button onclick="resetFilters()" class="text-sm text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-redo mr-1"></i> Réinitialiser
+                    </button>
+                    <button onclick="toggleAdvancedFilters()" class="text-sm text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-sliders-h mr-1"></i> Avancé
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-4" id="activeFilters">
+                <!-- Filtres actifs apparaîtront ici -->
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <input type="text" id="searchInput" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="Rechercher un membre..."
+                           onkeyup="searchMembers()">
+                </div>
+                
+                <div>
+                    <select id="statusFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            onchange="applyFilters()">
+                        <option value="">Tous les statuts</option>
+                        <option value="ACTIVE">Actif</option>
+                        <option value="INACTIVE">Inactif</option>
+                        <option value="PENDING">En attente</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <select id="sortFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            onchange="applyFilters()">
+                        <option value="newest">Plus récents</option>
+                        <option value="oldest">Plus anciens</option>
+                        <option value="name_asc">Nom A-Z</option>
+                        <option value="name_desc">Nom Z-A</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <button onclick="clearSearch()" class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+                        <i class="fas fa-times mr-2"></i> Effacer
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filtres avancés -->
+            <div id="advancedFilters" class="hidden mt-4 pt-4 border-t">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Date d'inscription</label>
+                        <div class="flex space-x-2">
+                            <input type="date" id="dateFrom" class="w-full px-3 py-2 border rounded-lg">
+                            <input type="date" id="dateTo" class="w-full px-3 py-2 border rounded-lg">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email contenant</label>
+                        <input type="text" id="emailFilter" class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    
+                    <div class="flex items-end">
+                        <button onclick="applyAdvancedFilters()" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Appliquer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Vue des membres -->
+        <div id="viewToggle" class="flex bg-gray-100 rounded-lg p-1 mb-6 w-fit">
+            <button id="viewGridBtn" class="px-4 py-2 rounded-md bg-white shadow-sm" onclick="switchView('grid')">
+                <i class="fas fa-th-large"></i>
+            </button>
+            <button id="viewTableBtn" class="px-4 py-2 rounded-md" onclick="switchView('table')">
+                <i class="fas fa-table"></i>
+            </button>
+            <button id="viewListBtn" class="px-4 py-2 rounded-md" onclick="switchView('list')">
+                <i class="fas fa-list"></i>
+            </button>
+        </div>
+        
+        <!-- Résultats -->
+        <div id="resultsInfo" class="mb-4 text-gray-600">
+            <span id="resultsCount">0</span> membres trouvés
+        </div>
+        
+        <!-- Vue Grille -->
+        <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Chargé dynamiquement -->
+        </div>
+        
+        <!-- Vue Tableau -->
+        <div id="tableView" class="hidden overflow-x-auto bg-white rounded-xl shadow">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Inscription</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody" class="bg-white divide-y divide-gray-200">
+                    <!-- Chargé dynamiquement -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Vue Liste -->
+        <div id="listView" class="hidden space-y-4">
+            <!-- Chargé dynamiquement -->
+        </div>
+        
+        <!-- Chargement -->
+        <div id="loading" class="text-center py-12">
+            <div class="spinner-border text-blue-600"></div>
+            <p class="mt-3 text-gray-600">Chargement des membres...</p>
+        </div>
+        
+        <!-- Aucun résultat -->
+        <div id="noResults" class="hidden text-center py-12">
+            <div class="text-gray-400 mb-4">
+                <i class="fas fa-users-slash text-5xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">Aucun membre trouvé</h3>
+            <p class="text-gray-500 mb-4">Essayez de modifier vos filtres ou ajoutez un nouveau membre</p>
+            <button onclick="showAddMemberModal()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <i class="fas fa-user-plus mr-2"></i>Ajouter un membre
+            </button>
+        </div>
+        
+        <!-- Pagination -->
+        <div id="pagination" class="mt-8 flex justify-center">
+            <!-- Générée dynamiquement -->
+        </div>
+    </main>
+    
+    <!-- Modal Ajout/Édition -->
+    <div id="memberModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 id="modalTitle" class="text-2xl font-bold text-gray-900">Nouveau Membre</h3>
+                    <button onclick="closeMemberModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <form id="memberForm" onsubmit="saveMember(event)">
+                    <input type="hidden" id="memberId">
+                    
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Prénom *</label>
+                                <input type="text" id="firstName" required 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nom *</label>
+                                <input type="text" id="lastName" required 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                                <input type="email" id="email" required 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <p class="text-sm text-gray-500 mt-1">L'email doit être unique</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
+                                <input type="tel" id="phone" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Date de naissance</label>
+                                <input type="date" id="birthDate" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Adresse</label>
+                                <textarea id="address" rows="2"
+                                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Statut</label>
+                                <select id="status" 
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="ACTIVE">Actif</option>
+                                    <option value="INACTIVE">Inactif</option>
+                                    <option value="PENDING">En attente</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div id="qrCodeSection" class="hidden">
+                            <div class="border-t pt-6">
+                                <h4 class="font-medium text-gray-700 mb-4">Badge numérique</h4>
+                                <div class="flex items-center space-x-6">
+                                    <div id="qrCode" class="bg-gray-100 p-4 rounded-lg"></div>
+                                    <div>
+                                        <p class="text-sm text-gray-600">QR Code généré automatiquement</p>
+                                        <button type="button" onclick="printMemberCard()" class="mt-2 text-blue-600 hover:text-blue-800">
+                                            <i class="fas fa-print mr-1"></i> Imprimer la carte
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-4 pt-6 border-t">
+                            <button type="button" onclick="closeMemberModal()" 
+                                    class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
+                                Annuler
+                            </button>
+                            <button type="submit" 
+                                    class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                <span id="saveButtonText">Enregistrer</span>
+                                <i class="fas fa-spinner fa-spin ml-2 hidden" id="saveSpinner"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Confirmation -->
+    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-exclamation-triangle text-red-600"></i>
+                    </div>
+                    <h3 id="confirmTitle" class="text-xl font-bold text-gray-900">Confirmation</h3>
+                </div>
+                <p id="confirmMessage" class="text-gray-600 mb-6"></p>
+                <div class="flex justify-end space-x-3">
+                    <button onclick="closeConfirmModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                        Annuler
+                    </button>
+                    <button id="confirmAction" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                        Confirmer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Script principal -->
+    <script>
+        const API_BASE = '/api/members';
+        let members = [];
+        let filteredMembers = [];
+        let currentView = 'grid';
+        let currentPage = 1;
+        const itemsPerPage = 12;
+        let memberToDelete = null;
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMembers();
+            setupViewToggle();
+            
+            // Check URL parameters for actions
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('action') && urlParams.get('action') === 'add') {
+                showAddMemberModal();
+            }
+            if (urlParams.has('edit')) {
+                editMember(urlParams.get('edit'));
+            }
+            if (urlParams.has('view')) {
+                viewMemberDetails(urlParams.get('view'));
+            }
+        });
+        
+        // Charger tous les membres
+        async function loadMembers() {
+            showLoading(true);
+            try {
+                const response = await axios.get(API_BASE);
+                members = response.data;
+                filteredMembers = [...members];
+                updateStats();
+                displayMembers();
+                showLoading(false);
+            } catch (error) {
+                console.error('Erreur chargement membres:', error);
+                showNotification('Erreur de chargement des membres', 'error');
+                showLoading(false);
+            }
+        }
+        
+        // Mettre à jour les statistiques
+        function updateStats() {
+            const total = members.length;
+            const active = members.filter(m => m.status === 'ACTIVE').length;
+            const inactive = members.filter(m => m.status === 'INACTIVE').length;
+            const pending = members.filter(m => m.status === 'PENDING').length;
+            
+            document.getElementById('totalMembers').textContent = total;
+            document.getElementById('activeMembers').textContent = active;
+            document.getElementById('inactiveMembers').textContent = inactive;
+            document.getElementById('pendingMembers').textContent = pending;
+        }
+        
+        // Afficher les membres selon la vue
+        function displayMembers() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageMembers = filteredMembers.slice(startIndex, endIndex);
+            
+            document.getElementById('resultsCount').textContent = `${filteredMembers.length} membre${filteredMembers.length !== 1 ? 's' : ''}`;
+            
+            if (filteredMembers.length === 0) {
+                document.getElementById('noResults').classList.remove('hidden');
+                document.getElementById('gridView').classList.add('hidden');
+                document.getElementById('tableView').classList.add('hidden');
+                document.getElementById('listView').classList.add('hidden');
+                return;
+            }
+            
+            document.getElementById('noResults').classList.add('hidden');
+            
+            switch(currentView) {
+                case 'grid':
+                    displayGridView(pageMembers);
+                    break;
+                case 'table':
+                    displayTableView(pageMembers);
+                    break;
+                case 'list':
+                    displayListView(pageMembers);
+                    break;
+            }
+            
+            updatePagination();
+        }
+        
+        // Vue Grille
+        function displayGridView(members) {
+            const container = document.getElementById('gridView');
+            container.innerHTML = '';
+            
+            members.forEach(member => {
+                const card = createMemberCard(member);
+                container.appendChild(card);
+            });
+            
+            container.classList.remove('hidden');
+            document.getElementById('tableView').classList.add('hidden');
+            document.getElementById('listView').classList.add('hidden');
+        }
+        
+        // Vue Tableau
+        function displayTableView(members) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            members.forEach(member => {
+                const row = createTableRow(member);
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('tableView').classList.remove('hidden');
+            document.getElementById('gridView').classList.add('hidden');
+            document.getElementById('listView').classList.add('hidden');
+        }
+        
+        // Vue Liste
+        function displayListView(members) {
+            const container = document.getElementById('listView');
+            container.innerHTML = '';
+            
+            members.forEach(member => {
+                const item = createListItem(member);
+                container.appendChild(item);
+            });
+            
+            container.classList.remove('hidden');
+            document.getElementById('gridView').classList.add('hidden');
+            document.getElementById('tableView').classList.add('hidden');
+        }
+        
+        // Créer une carte membre
+        function createMemberCard(member) {
+            const div = document.createElement('div');
+            div.className = 'member-card bg-white rounded-xl p-6';
+            
+            const statusClass = getStatusClass(member.status);
+            const statusText = getStatusText(member.status);
+            const initials = `${member.firstName[0]}${member.lastName[0]}`.toUpperCase();
+            
+            div.innerHTML = `
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="avatar-gradient w-12 h-12 rounded-full flex items-center justify-center font-bold">
+                            ${initials}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">${member.firstName} ${member.lastName}</h4>
+                            <p class="text-gray-600 text-sm">${member.email}</p>
+                        </div>
+                    </div>
+                    <div class="relative group">
+                        <button class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-10 hidden group-hover:block border">
+                            <button onclick="editMember(${member.id})" class="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                                <i class="fas fa-edit mr-2 text-blue-600"></i> Modifier
+                            </button>
+                            <button onclick="viewMemberDetails(${member.id})" class="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                                <i class="fas fa-eye mr-2 text-green-600"></i> Voir détails
+                            </button>
+                            <button onclick="sendEmailToMember('${member.email}')" class="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                                <i class="fas fa-envelope mr-2 text-purple-600"></i> Envoyer email
+                            </button>
+                            <div class="border-t">
+                                <button onclick="confirmDeleteMember(${member.id}, '${member.firstName} ${member.lastName}')" 
+                                        class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">
+                                    <i class="fas fa-trash mr-2"></i> Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="flex items-center text-sm text-gray-600 mb-1">
+                        <i class="fas fa-phone mr-2"></i>
+                        <span>${member.phone || 'Non renseigné'}</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i class="fas fa-calendar mr-2"></i>
+                        <span>Inscrit le ${new Date(member.registrationDate).toLocaleDateString()}</span>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center pt-4 border-t">
+                    <span class="${statusClass} status-badge">
+                        <i class="fas fa-circle mr-1" style="font-size: 6px;"></i>
+                        ${statusText}
+                    </span>
+                    <button onclick="toggleMemberStatus(${member.id}, '${member.status}')" 
+                            class="text-sm ${member.status === 'ACTIVE' ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800'}">
+                        ${member.status === 'ACTIVE' ? 'Désactiver' : 'Activer'}
+                    </button>
+                </div>
+            `;
+            
+            return div;
+        }
+        
+        // Créer une ligne tableau
+        function createTableRow(member) {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-gray-50';
+            
+            const statusClass = getStatusClass(member.status);
+            const statusText = getStatusText(member.status);
+            
+            tr.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                            ${member.firstName[0]}${member.lastName[0]}
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-900">${member.firstName} ${member.lastName}</div>
+                            <div class="text-sm text-gray-500">${member.email}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-900">${member.phone || '-'}</div>
+                    <div class="text-sm text-gray-500">${member.address ? member.address.substring(0, 30) + '...' : '-'}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    ${new Date(member.registrationDate).toLocaleDateString()}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
+                        ${statusText}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button onclick="editMember(${member.id})" class="text-blue-600 hover:text-blue-900 mr-3">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button onclick="viewMemberDetails(${member.id})" class="text-green-600 hover:text-green-900 mr-3">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button onclick="confirmDeleteMember(${member.id}, '${member.firstName} ${member.lastName}')" class="text-red-600 hover:text-red-900">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            
+            return tr;
+        }
+        
+        // Créer un item liste
+        function createListItem(member) {
+            const div = document.createElement('div');
+            div.className = 'bg-white rounded-lg p-4';
+            
+            const statusClass = getStatusClass(member.status);
+            const statusText = getStatusText(member.status);
+            
+            div.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                            ${member.firstName[0]}${member.lastName[0]}
+                        </div>
+                        <div>
+                            <h4 class="font-bold">${member.firstName} ${member.lastName}</h4>
+                            <p class="text-sm text-gray-600">${member.email} • ${member.phone || 'Pas de téléphone'}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusClass}">
+                            ${statusText}
+                        </span>
+                        <button onclick="editMember(${member.id})" class="text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return div;
+        }
+        
+        // Fonctions utilitaires
+        function getStatusClass(status) {
+            switch(status) {
+                case 'ACTIVE': return 'status-active';
+                case 'INACTIVE': return 'status-inactive';
+                case 'PENDING': return 'status-pending';
+                default: return 'status-pending';
+            }
+        }
+        
+        function getStatusText(status) {
+            switch(status) {
+                case 'ACTIVE': return 'Actif';
+                case 'INACTIVE': return 'Inactif';
+                case 'PENDING': return 'En attente';
+                default: return status;
+            }
+        }
+        
+        // Recherche et filtres
+        function searchMembers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            applyFilters();
+        }
+        
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const sortFilter = document.getElementById('sortFilter').value;
+            
+            filteredMembers = members.filter(member => {
+                // Recherche texte
+                const searchMatch = !searchTerm || 
+                    member.firstName.toLowerCase().includes(searchTerm) ||
+                    member.lastName.toLowerCase().includes(searchTerm) ||
+                    member.email.toLowerCase().includes(searchTerm) ||
+                    (member.phone && member.phone.includes(searchTerm));
+                
+                // Filtre statut
+                const statusMatch = !statusFilter || member.status === statusFilter;
+                
+                return searchMatch && statusMatch;
+            });
+            
+            // Tri
+            switch(sortFilter) {
+                case 'newest':
+                    filteredMembers.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
+                    break;
+                case 'oldest':
+                    filteredMembers.sort((a, b) => new Date(a.registrationDate) - new Date(b.registrationDate));
+                    break;
+                case 'name_asc':
+                    filteredMembers.sort((a, b) => a.lastName.localeCompare(b.lastName));
+                    break;
+                case 'name_desc':
+                    filteredMembers.sort((a, b) => b.lastName.localeCompare(a.lastName));
+                    break;
+            }
+            
+            currentPage = 1;
+            displayMembers();
+            updateActiveFilters();
+        }
+        
+        function applyAdvancedFilters() {
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            const emailFilter = document.getElementById('emailFilter').value.toLowerCase();
+            
+            if (dateFrom || dateTo || emailFilter) {
+                filteredMembers = filteredMembers.filter(member => {
+                    const dateMatch = (!dateFrom || new Date(member.registrationDate) >= new Date(dateFrom)) &&
+                                     (!dateTo || new Date(member.registrationDate) <= new Date(dateTo));
+                    const emailMatch = !emailFilter || member.email.toLowerCase().includes(emailFilter);
+                    
+                    return dateMatch && emailMatch;
+                });
+                
+                currentPage = 1;
+                displayMembers();
+                updateActiveFilters();
+            }
+        }
+        
+        function updateActiveFilters() {
+            const container = document.getElementById('activeFilters');
+            container.innerHTML = '';
+            
+            const searchTerm = document.getElementById('searchInput').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            if (searchTerm) {
+                addFilterPill(`Recherche: "${searchTerm}"`, () => {
+                    document.getElementById('searchInput').value = '';
+                    applyFilters();
+                });
+            }
+            
+            if (statusFilter) {
+                const statusText = getStatusText(statusFilter);
+                addFilterPill(`Statut: ${statusText}`, () => {
+                    document.getElementById('statusFilter').value = '';
+                    applyFilters();
+                });
+            }
+        }
+        
+        function addFilterPill(text, onClick) {
+            const container = document.getElementById('activeFilters');
+            const pill = document.createElement('div');
+            pill.className = 'filter-pill inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800';
+            pill.innerHTML = `
+                ${text}
+                <button onclick="event.stopPropagation(); ${onClick.toString().replace('function ', '')}" 
+                        class="ml-2 text-blue-600 hover:text-blue-800">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(pill);
+        }
+        
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('sortFilter').value = 'newest';
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            document.getElementById('emailFilter').value = '';
+            applyFilters();
+        }
+        
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            applyFilters();
+        }
+        
+        function toggleAdvancedFilters() {
+            const filters = document.getElementById('advancedFilters');
+            filters.classList.toggle('hidden');
+        }
+        
+        // Pagination
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
+            const container = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '<nav class="flex items-center space-x-2">';
+            
+            // Previous button
+            html += `
+                <button onclick="changePage(${currentPage - 1})" 
+                        ${currentPage === 1 ? 'disabled' : ''}
+                        class="px-3 py-2 rounded-lg ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white border text-gray-700 hover:bg-gray-50'}">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `
+                        <button onclick="changePage(${i})" 
+                                class="px-4 py-2 rounded-lg ${currentPage === i ? 'bg-blue-600 text-white' : 'bg-white border text-gray-700 hover:bg-gray-50'}">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += '<span class="px-2 text-gray-500">...</span>';
+                }
+            }
+            
+            // Next button
+            html += `
+                <button onclick="changePage(${currentPage + 1})" 
+                        ${currentPage === totalPages ? 'disabled' : ''}
+                        class="px-3 py-2 rounded-lg ${currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-white border text-gray-700 hover:bg-gray-50'}">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+            
+            html += '</nav>';
+            container.innerHTML = html;
+        }
+        
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                displayMembers();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        
+        // Gestion des vues
+        function setupViewToggle() {
+            switchView('grid');
+        }
+        
+        function switchView(view) {
+            currentView = view;
+            
+            // Update button states
+            document.getElementById('viewGridBtn').className = 
+                view === 'grid' ? 'px-4 py-2 rounded-md bg-white shadow-sm' : 'px-4 py-2 rounded-md';
+            document.getElementById('viewTableBtn').className = 
+                view === 'table' ? 'px-4 py-2 rounded-md bg-white shadow-sm' : 'px-4 py-2 rounded-md';
+            document.getElementById('viewListBtn').className = 
+                view === 'list' ? 'px-4 py-2 rounded-md bg-white shadow-sm' : 'px-4 py-2 rounded-md';
+            
+            displayMembers();
+        }
+        
+        // Modal Member
+        function showAddMemberModal() {
+            document.getElementById('modalTitle').textContent = 'Nouveau Membre';
+            document.getElementById('memberForm').reset();
+            document.getElementById('memberId').value = '';
+            document.getElementById('status').value = 'ACTIVE';
+            document.getElementById('qrCodeSection').classList.add('hidden');
+            document.getElementById('saveButtonText').textContent = 'Enregistrer';
+            document.getElementById('memberModal').classList.remove('hidden');
+        }
+        
+        async function editMember(id) {
+            try {
+                const response = await axios.get(`${API_BASE}/${id}`);
+                const member = response.data;
+                
+                document.getElementById('modalTitle').textContent = 'Modifier le Membre';
+                document.getElementById('memberId').value = member.id;
+                document.getElementById('firstName').value = member.firstName;
+                document.getElementById('lastName').value = member.lastName;
+                document.getElementById('email').value = member.email;
+                document.getElementById('phone').value = member.phone || '';
+                document.getElementById('birthDate').value = member.birthDate || '';
+                document.getElementById('address').value = member.address || '';
+                document.getElementById('status').value = member.status;
+                
+                document.getElementById('qrCodeSection').classList.remove('hidden');
+                document.getElementById('saveButtonText').textContent = 'Mettre à jour';
+                document.getElementById('memberModal').classList.remove('hidden');
+                
+            } catch (error) {
+                showNotification('Erreur lors du chargement du membre', 'error');
+            }
+        }
+        
+        function closeMemberModal() {
+            document.getElementById('memberModal').classList.add('hidden');
+        }
+        
+        async function saveMember(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('memberId').value;
+            const memberData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value || null,
+                birthDate: document.getElementById('birthDate').value || null,
+                address: document.getElementById('address').value || null,
+                status: document.getElementById('status').value
+            };
+            
+            const saveButton = document.getElementById('saveButtonText');
+            const spinner = document.getElementById('saveSpinner');
+            
+            saveButton.textContent = id ? 'Mise à jour...' : 'Enregistrement...';
+            spinner.classList.remove('hidden');
+            
+            try {
+                let response;
+                if (id) {
+                    response = await axios.put(`${API_BASE}/${id}`, memberData);
+                    showNotification('Membre mis à jour avec succès!', 'success');
+                } else {
+                    response = await axios.post(API_BASE, memberData);
+                    showNotification('Membre créé avec succès!', 'success');
+                }
+                
+                closeMemberModal();
+                loadMembers();
+                
+            } catch (error) {
+                const errorMsg = error.response?.data?.message || error.message;
+                showNotification(`Erreur: ${errorMsg}`, 'error');
+            } finally {
+                saveButton.textContent = id ? 'Mettre à jour' : 'Enregistrer';
+                spinner.classList.add('hidden');
+            }
+        }
+        
+        // Suppression
+        function confirmDeleteMember(id, name) {
+            memberToDelete = id;
+            document.getElementById('confirmTitle').textContent = 'Supprimer le membre';
+            document.getElementById('confirmMessage').textContent = `Êtes-vous sûr de vouloir supprimer le membre "${name}" ? Cette action est irréversible.`;
+            document.getElementById('confirmAction').onclick = deleteMember;
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+        
+        async function deleteMember() {
+            if (!memberToDelete) return;
+            
+            try {
+                await axios.delete(`${API_BASE}/${memberToDelete}`);
+                showNotification('Membre supprimé avec succès!', 'success');
+                closeConfirmModal();
+                loadMembers();
+            } catch (error) {
+                showNotification('Erreur lors de la suppression', 'error');
+            }
+        }
+        
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+            memberToDelete = null;
+        }
+        
+        // Autres actions
+        async function toggleMemberStatus(id, currentStatus) {
+            const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+            
+            try {
+                const member = await axios.get(`${API_BASE}/${id}`);
+                const updatedMember = { ...member.data, status: newStatus };
+                
+                await axios.put(`${API_BASE}/${id}`, updatedMember);
+                showNotification(`Statut modifié en ${getStatusText(newStatus)}`, 'success');
+                loadMembers();
+            } catch (error) {
+                showNotification('Erreur lors du changement de statut', 'error');
+            }
+        }
+        
+        function viewMemberDetails(id) {
+            // Dans une implémentation réelle, ouvrir un modal avec les détails complets
+            showNotification(`Voir détails du membre #${id}`, 'info');
+            // Pour l'instant, rediriger vers une page de détails ou ouvrir un modal
+        }
+        
+        function sendEmailToMember(email) {
+            window.location.href = `mailto:${email}`;
+        }
+        
+        // Export CSV
+        async function exportToCSV() {
+            try {
+                const response = await axios.get(API_BASE);
+                const members = response.data;
+                
+                // Créer le contenu CSV
+                const headers = ['ID', 'Prénom', 'Nom', 'Email', 'Téléphone', 'Date Naissance', 'Adresse', 'Date Inscription', 'Statut'];
+                const rows = members.map(m => [
+                    m.id,
+                    m.firstName,
+                    m.lastName,
+                    m.email,
+                    m.phone || '',
+                    m.birthDate || '',
+                    m.address || '',
+                    m.registrationDate,
+                    getStatusText(m.status)
+                ]);
+                
+                const csvContent = [
+                    headers.join(','),
+                    ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+                ].join('\n');
+                
+                // Télécharger le fichier
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `membres-sportclub-${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('Export CSV terminé!', 'success');
+            } catch (error) {
+                showNotification('Erreur lors de l\'export', 'error');
+            }
+        }
+        
+        function printMemberCard() {
+            // Simuler l'impression d'une carte de membre
+            showNotification('Impression de la carte...', 'info');
+            // Dans une implémentation réelle, générer un PDF
+        }
+        
+        // UI helpers
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('hidden', !show);
+        }
+        
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500',
+                warning: 'bg-yellow-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg text-white ${colors[type]} animate__animated animate__fadeInRight`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-triangle' : 'info'}-circle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('animate__fadeOutRight');
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+        
+        // Add animate.css styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .animate__animated {
+                animation-duration: 0.5s;
+            }
+            
+            @keyframes fadeInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            @keyframes fadeOutRight {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+            }
+            
+            .animate__fadeInRight {
+                animation-name: fadeInRight;
+            }
+            
+            .animate__fadeOutRight {
+                animation-name: fadeOutRight;
+            }
+            
+            .spinner-border {
+                display: inline-block;
+                width: 2rem;
+                height: 2rem;
+                border: 0.25em solid currentColor;
+                border-right-color: transparent;
+                border-radius: 50%;
+                animation: spinner-border .75s linear infinite;
+            }
+            
+            @keyframes spinner-border {
+                to { transform: rotate(360deg); }
+            }
+            
+            .fa-spin {
+                animation: fa-spin 1s linear infinite;
+            }
+            
+            @keyframes fa-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

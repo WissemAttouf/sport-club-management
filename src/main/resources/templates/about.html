@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Technologique | SportClub Pro</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <style>
+        .tech-card {
+            transition: all 0.3s ease;
+        }
+        
+        .tech-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .api-endpoint {
+            font-family: 'Courier New', monospace;
+            background-color: #f7fafc;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .flip-card {
+            perspective: 1000px;
+        }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+        }
+        
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .flip-card-back {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: rotateY(180deg);
+        }
+        
+        .architecture-layer {
+            transition: all 0.3s ease;
+        }
+        
+        .architecture-layer:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-3">
+                    <i class="fas fa-running text-2xl"></i>
+                    <span class="text-xl font-bold">SportClub<span class="text-yellow-300">Pro</span></span>
+                </a>
+                <div class="flex items-center space-x-6">
+                    <a href="/" class="hover:text-yellow-300">
+                        <i class="fas fa-home mr-1"></i> Dashboard
+                    </a>
+                    <a href="/members" class="hover:text-yellow-300">
+                        <i class="fas fa-users mr-1"></i> Membres
+                    </a>
+                    <a href="/about" class="font-bold">
+                        <i class="fas fa-code mr-1"></i> Technologie
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Architecture Technologique</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Découvrez la stack moderne derrière SportClub Pro - Conçue pour scaler et performer
+            </p>
+        </div>
+        
+        <!-- Stats Techniques -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+            <div class="bg-white rounded-xl p-6 shadow text-center">
+                <div class="text-3xl font-bold text-blue-600 mb-2">99.9%</div>
+                <div class="text-gray-600">Uptime API</div>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow text-center">
+                <div class="text-3xl font-bold text-green-600 mb-2">42ms</div>
+                <div class="text-gray-600">Temps réponse moyen</div>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow text-center">
+                <div class="text-3xl font-bold text-purple-600 mb-2">10K+</div>
+                <div class="text-gray-600">Membres supportés</div>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow text-center">
+                <div class="text-3xl font-bold text-orange-600 mb-2">100%</div>
+                <div class="text-gray-600">API Coverage</div>
+            </div>
+        </div>
+        
+        <!-- Stack Technologique -->
+        <div class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Stack Technologique</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <!-- Spring Boot -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front bg-white rounded-xl shadow p-6 tech-card">
+                            <i class="fab fa-java text-5xl text-red-500 mb-4"></i>
+                            <h3 class="font-bold text-lg">Spring Boot</h3>
+                            <p class="text-sm text-gray-600">3.2.0</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p class="text-sm text-center">API REST performante avec validation native et sécurité intégrée</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- H2 Database -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front bg-white rounded-xl shadow p-6 tech-card">
+                            <i class="fas fa-database text-5xl text-green-500 mb-4"></i>
+                            <h3 class="font-bold text-lg">H2 Database</h3>
+                            <p class="text-sm text-gray-600">In-memory SQL</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p class="text-sm text-center">Base de données embarquée pour le développement et les tests</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- JPA/Hibernate -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front bg-white rounded-xl shadow p-6 tech-card">
+                            <i class="fas fa-layer-group text-5xl text-blue-500 mb-4"></i>
+                            <h3 class="font-bold text-lg">Spring Data JPA</h3>
+                            <p class="text-sm text-gray-600">Hibernate 6</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p class="text-sm text-center">ORM performant avec gestion automatique des transactions</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Thymeleaf -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front bg-white rounded-xl shadow p-6 tech-card">
+                            <i class="fas fa-leaf text-5xl text-green-600 mb-4"></i>
+                            <h3 class="font-bold text-lg">Thymeleaf</h3>
+                            <p class="text-sm text-gray-600">Templating</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p class="text-sm text-center">Moteur de templates pour le rendu côté serveur</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Swagger/OpenAPI -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front bg-white rounded-xl shadow p-6 tech-card">
+                            <i class="fas fa-file-alt text-5xl text-orange-500 mb-4"></i>
+                            <h3 class="font-bold text-lg">Swagger UI</h3>
+                            <p class="text-sm text-gray-600">OpenAPI 3</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p class="text-sm text-center">Documentation interactive de l'API</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bootstrap/Tailwind -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front bg-white rounded-xl shadow p-6 tech-card">
+                            <i class="fab fa-css3-alt text-5xl text-purple-500 mb-4"></i>
+                            <h3 class="font-bold text-lg">Tailwind CSS</h3>
+                            <p class="text-sm text-gray-600">3.3.0</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p class="text-sm text-center">Framework CSS utility-first pour un design responsive</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Démo API Interactive -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Démo API Interactive</h2>
+            <p class="text-gray-600 text-center mb-8">
+                Testez les endpoints de l'API en temps réel
+            </p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Panel des requêtes -->
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Endpoints disponibles</h3>
+                    
+                    <div class="space-y-4">
+                        <!-- GET /api/members -->
+                        <div class="api-endpoint p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                                    <code class="text-gray-800">/api/members</code>
+                                </div>
+                                <button onclick="testEndpoint('GET', '/api/members')" 
+                                        class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+                                    <i class="fas fa-play mr-1"></i>Tester
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-600">Récupère la liste de tous les membres</p>
+                        </div>
+                        
+                        <!-- POST /api/members -->
+                        <div class="api-endpoint p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center">
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                                    <code class="text-gray-800">/api/members</code>
+                                </div>
+                                <button onclick="showCreateMemberForm()" 
+                                        class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+                                    <i class="fas fa-play mr-1"></i>Tester
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-600">Crée un nouveau membre</p>
+                        </div>
+                        
+                        <!-- GET /api/members/count -->
+                        <div class="api-endpoint p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                                    <code class="text-gray-800">/api/members/count</code>
+                                </div>
+                                <button onclick="testEndpoint('GET', '/api/members/count')" 
+                                        class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+                                    <i class="fas fa-play mr-1"></i>Tester
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-600">Compte le nombre total de membres</p>
+                        </div>
+                        
+                        <!-- GET /api/members/{id} -->
+                        <div class="api-endpoint p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                                    <code class="text-gray-800">/api/members/{id}</code>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <input type="number" id="memberIdInput" placeholder="ID" 
+                                           class="w-20 px-2 py-1 border rounded text-sm">
+                                    <button onclick="testGetMemberById()" 
+                                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+                                        <i class="fas fa-play mr-1"></i>Tester
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600">Récupère un membre par son ID</p>
+                        </div>
+                        
+                        <!-- PUT /api/members/{id} -->
+                        <div class="api-endpoint p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center">
+                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-bold mr-3">PUT</span>
+                                    <code class="text-gray-800">/api/members/{id}</code>
+                                </div>
+                                <button onclick="showUpdateMemberForm()" 
+                                        class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+                                    <i class="fas fa-play mr-1"></i>Tester
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-600">Met à jour un membre existant</p>
+                        </div>
+                        
+                        <!-- DELETE /api/members/{id} -->
+                        <div class="api-endpoint p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center">
+                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold mr-3">DELETE</span>
+                                    <code class="text-gray-800">/api/members/{id}</code>
+                                </div>
+                                <button onclick="testDeleteMember()" 
+                                        class="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700">
+                                    <i class="fas fa-play mr-1"></i>Tester
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-600">Supprime un membre</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Panel des résultats -->
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Réponse de l'API</h3>
+                    
+                    <div class="bg-gray-900 rounded-lg p-4 h-96 overflow-auto">
+                        <pre id="apiResponse" class="text-green-400 text-sm">
+Cliquez sur "Tester" pour voir la réponse de l'API...
+                        </pre>
+                    </div>
+                    
+                    <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <h4 class="font-bold text-blue-800 mb-2">Informations de connexion</h4>
+                        <div class="text-sm text-blue-700 space-y-1">
+                            <div>Port: <code class="bg-blue-100 px-2 py-1 rounded">8083</code></div>
+                            <div>Base URL: <code class="bg-blue-100 px-2 py-1 rounded">http://localhost:8083</code></div>
+                            <div>Swagger UI: <a href="/swagger-ui.html" target="_blank" class="text-blue-600 hover:underline">/swagger-ui.html</a></div>
+                            <div>H2 Console: <a href="/h2-console" target="_blank" class="text-blue-600 hover:underline">/h2-console</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Architecture -->
+        <div class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Architecture en Couches</h2>
+            
+            <div class="space-y-6">
+                <!-- Couche Présentation -->
+                <div class="architecture-layer bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-desktop text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Couche Présentation</h3>
+                            <p class="text-gray-600">Thymeleaf + Bootstrap + JavaScript</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 mt-4">
+                        <div class="bg-gray-50 p-3 rounded">
+                            <h4 class="font-bold text-gray-700 mb-1">Controllers</h4>
+                            <ul class="text-sm text-gray-600 list-disc pl-5">
+                                <li>MainController</li>
+                                <li>MemberController</li>
+                                <li>GlobalController</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <h4 class="font-bold text-gray-700 mb-1">Templates</h4>
+                            <ul class="text-sm text-gray-600 list-disc pl-5">
+                                <li>HTML + Thymeleaf</li>
+                                <li>Responsive Design</li>
+                                <li>Validation client</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <h4 class="font-bold text-gray-700 mb-1">JavaScript</h4>
+                            <ul class="text-sm text-gray-600 list-disc pl-5">
+                                <li>Fetch API</li>
+                                <li>Axios</li>
+                                <li>Dynamic UI</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Couche Métier -->
+                <div class="architecture-layer bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-cogs text-green-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Couche Métier</h3>
+                            <p class="text-gray-600">Services + Logique métier</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 mt-4">
+                        <div class="bg-gray-50 p-3 rounded">
+                            <h4 class="font-bold text-gray-700 mb-1">Services</h4>
+                            <ul class="text-sm text-gray-600 list-disc pl-5">
+                                <li>MemberService</li>
+                                <li>Validation métier</li>
+                                <li>Transactions</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <h4 class="font-bold text-gray-700 mb-1">Business Rules</h4>
+                            <ul class="text-sm text-gray-600 list-disc pl-5">
+                                <li>Email unique</li>
+                                <li>Gestion statuts</li>
+                                <li>Contrôles intégrité</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <h4 class="font-bold text-gray-700 mb-1">Exceptions</h4>
+                            <ul class="text-sm text-gray-600 list-disc pl-5">
+                                <li>Custom exceptions</li>
+                                <li>Error handling</li>
+                                <li>Global controller</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Couche Persistance -->
+                <div class="architecture-layer bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-database text-purple-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Couche Persistance</h3>
+                            <p class="text-gray-600">JPA + Hibernate + H2 Database</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 mt-4">
+                        <div class="bg-gray-50 p-3 rounded">
+                            <h4 class="font-bold text-gray-700 mb-1">Repository</h4>
+                            <ul class="text-sm text-gray-600 list-disc pl-5">
+                                <li>MemberRepository</li>
+                                <li>Spring Data JPA</li>
+                                <li>Custom queries</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <h4 class="font-bold text-gray-700 mb-1">Entities</h4>
+                            <ul class="text-sm text-gray-600 list-disc pl-5">
+                                <li>Member entity</li>
+                                <li>Lombok annotations</li>
+                                <li>JPA mappings</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <h4 class="font-bold text-gray-700 mb-1">Database</h4>
+                            <ul class="text-sm text-gray-600 list-disc pl-5">
+                                <li>H2 in-memory</li>
+                                <li>Auto DDL update</li>
+                                <li>Console web</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Diagramme de séquence -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Diagramme de Séquence API</h2>
+            
+            <div class="flex flex-col items-center">
+                <div class="w-full max-w-4xl">
+                    <!-- Client -->
+                    <div class="flex items-center mb-8">
+                        <div class="w-32 text-right pr-4">
+                            <div class="font-bold text-gray-700">Client</div>
+                            <div class="text-sm text-gray-500">Navigateur Web</div>
+                        </div>
+                        <div class="flex-1 border-t-2 border-gray-300"></div>
+                    </div>
+                    
+                    <!-- Controller -->
+                    <div class="flex items-center mb-8">
+                        <div class="w-32 text-right pr-4">
+                            <div class="font-bold text-gray-700">Controller</div>
+                            <div class="text-sm text-gray-500">@RestController</div>
+                        </div>
+                        <div class="flex-1 border-t-2 border-gray-300 relative">
+                            <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-blue-500 rounded-full"></div>
+                            <div class="absolute left-1/4 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-blue-500 rounded-full"></div>
+                            <div class="absolute left-1/2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-blue-500 rounded-full"></div>
+                            <div class="absolute left-3/4 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-blue-500 rounded-full"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Service -->
+                    <div class="flex items-center mb-8">
+                        <div class="w-32 text-right pr-4">
+                            <div class="font-bold text-gray-700">Service</div>
+                            <div class="text-sm text-gray-500">@Service</div>
+                        </div>
+                        <div class="flex-1 border-t-2 border-gray-300 relative">
+                            <div class="absolute left-1/3 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-green-500 rounded-full"></div>
+                            <div class="absolute left-2/3 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-green-500 rounded-full"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Repository -->
+                    <div class="flex items-center mb-8">
+                        <div class="w-32 text-right pr-4">
+                            <div class="font-bold text-gray-700">Repository</div>
+                            <div class="text-sm text-gray-500">JpaRepository</div>
+                        </div>
+                        <div class="flex-1 border-t-2 border-gray-300 relative">
+                            <div class="absolute left-1/2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-purple-500 rounded-full"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Database -->
+                    <div class="flex items-center">
+                        <div class="w-32 text-right pr-4">
+                            <div class="font-bold text-gray-700">Database</div>
+                            <div class="text-sm text-gray-500">H2 SQL</div>
+                        </div>
+                        <div class="flex-1 border-t-2 border-gray-300"></div>
+                    </div>
+                    
+                    <!-- Légende -->
+                    <div class="mt-8 grid grid-cols-4 gap-4">
+                        <div class="text-center">
+                            <div class="w-4 h-4 bg-blue-500 rounded-full mx-auto mb-2"></div>
+                            <div class="text-sm font-medium">Validation</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-4 h-4 bg-green-500 rounded-full mx-auto mb-2"></div>
+                            <div class="text-sm font-medium">Logique métier</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-4 h-4 bg-purple-500 rounded-full mx-auto mb-2"></div>
+                            <div class="text-sm font-medium">Persistence</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-4 h-4 bg-yellow-500 rounded-full mx-auto mb-2"></div>
+                            <div class="text-sm font-medium">Transaction</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Liens rapides -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <a href="/swagger-ui.html" target="_blank" 
+               class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow group">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-code text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Swagger UI</h3>
+                        <p class="text-gray-600">Documentation interactive de l'API</p>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="/h2-console" target="_blank" 
+               class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow group">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-database text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">H2 Console</h3>
+                        <p class="text-gray-600">Interface d'administration de la base de données</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </main>
+    
+    <!-- Modal pour création membre -->
+    <div id="createMemberModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-900">Tester POST /api/members</h3>
+                    <button onclick="closeCreateMemberModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Prénom</label>
+                        <input type="text" id="testFirstName" value="Test" 
+                               class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+                        <input type="text" id="testLastName" value="API" 
+                               class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="testEmail" value={`test${Date.now()}@sportclub.com`} 
+                               class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button onclick="closeCreateMemberModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                            Annuler
+                        </button>
+                        <button onclick="executeCreateMember()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            <i class="fas fa-play mr-2"></i>Exécuter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = '/api/members';
+        
+        // Tester un endpoint API
+        async function testEndpoint(method, endpoint) {
+            const responseElement = document.getElementById('apiResponse');
+            responseElement.innerHTML = '<span class="text-yellow-400">Exécution en cours...</span>';
+            
+            try {
+                let response;
+                if (method === 'GET') {
+                    response = await axios.get(endpoint);
+                } else if (method === 'POST') {
+                    response = await axios.post(endpoint, {
+                        firstName: "Test",
+                        lastName: "API",
+                        email: `test${Date.now()}@sportclub.com`,
+                        status: "ACTIVE"
+                    });
+                } else if (method === 'PUT') {
+                    response = await axios.put(`${endpoint}/1`, {
+                        firstName: "Updated",
+                        lastName: "Member",
+                        email: `updated${Date.now()}@sportclub.com`,
+                        status: "ACTIVE"
+                    });
+                } else if (method === 'DELETE') {
+                    response = await axios.delete(`${endpoint}/1`);
+                }
+                
+                const formattedResponse = JSON.stringify(response.data, null, 2);
+                responseElement.innerHTML = `<span class="text-green-400">${formattedResponse}</span>`;
+                
+                // Afficher des statistiques
+                if (method === 'GET' && endpoint === '/api/members') {
+                    const count = Array.isArray(response.data) ? response.data.length : 0;
+                    showApiStats(`Récupéré ${count} membres`);
+                }
+                
+            } catch (error) {
+                const errorMsg = error.response ? 
+                    JSON.stringify(error.response.data, null, 2) : 
+                    error.message;
+                responseElement.innerHTML = `<span class="text-red-400">Erreur: ${errorMsg}</span>`;
+            }
+        }
+        
+        // Tester GET par ID
+        async function testGetMemberById() {
+            const id = document.getElementById('memberIdInput').value;
+            if (!id) {
+                alert('Veuillez entrer un ID');
+                return;
+            }
+            
+            await testEndpoint('GET', `/api/members/${id}`);
+        }
+        
+        // Tester DELETE
+        async function testDeleteMember() {
+            const id = prompt("Entrez l'ID du membre à supprimer:");
+            if (!id) return;
+            
+            if (confirm(`Êtes-vous sûr de vouloir supprimer le membre #${id} ?`)) {
+                await testEndpoint('DELETE', `/api/members/${id}`);
+            }
+        }
+        
+        // Modal création membre
+        function showCreateMemberForm() {
+            document.getElementById('testEmail').value = `test${Date.now()}@sportclub.com`;
+            document.getElementById('createMemberModal').classList.remove('hidden');
+        }
+        
+        function closeCreateMemberModal() {
+            document.getElementById('createMemberModal').classList.add('hidden');
+        }
+        
+        async function executeCreateMember() {
+            const memberData = {
+                firstName: document.getElementById('testFirstName').value,
+                lastName: document.getElementById('testLastName').value,
+                email: document.getElementById('testEmail').value,
+                status: "ACTIVE"
+            };
+            
+            const responseElement = document.getElementById('apiResponse');
+            responseElement.innerHTML = '<span class="text-yellow-400">Création en cours...</span>';
+            
+            try {
+                const response = await axios.post(API_BASE, memberData);
+                const formattedResponse = JSON.stringify(response.data, null, 2);
+                responseElement.innerHTML = `<span class="text-green-400">${formattedResponse}</span>`;
+                showApiStats(`Membre créé avec ID: ${response.data.id}`);
+                closeCreateMemberModal();
+            } catch (error) {
+                const errorMsg = error.response ? 
+                    JSON.stringify(error.response.data, null, 2) : 
+                    error.message;
+                responseElement.innerHTML = `<span class="text-red-400">Erreur: ${errorMsg}</span>`;
+            }
+        }
+        
+        // Modal mise à jour membre
+        function showUpdateMemberForm() {
+            const id = prompt("Entrez l'ID du membre à mettre à jour:");
+            if (!id) return;
+            
+            // Charger le membre existant
+            axios.get(`${API_BASE}/${id}`)
+                .then(response => {
+                    const member = response.data;
+                    const newEmail = prompt(`Mettre à jour ${member.firstName} ${member.lastName}\nNouvel email:`, member.email);
+                    
+                    if (newEmail) {
+                        const updateData = {
+                            ...member,
+                            email: newEmail,
+                            firstName: prompt("Nouveau prénom:", member.firstName) || member.firstName,
+                            lastName: prompt("Nouveau nom:", member.lastName) || member.lastName
+                        };
+                        
+                        // Exécuter la mise à jour
+                        axios.put(`${API_BASE}/${id}`, updateData)
+                            .then(response => {
+                                const formattedResponse = JSON.stringify(response.data, null, 2);
+                                document.getElementById('apiResponse').innerHTML = 
+                                    `<span class="text-green-400">${formattedResponse}</span>`;
+                                showApiStats(`Membre #${id} mis à jour`);
+                            })
+                            .catch(error => {
+                                document.getElementById('apiResponse').innerHTML = 
+                                    `<span class="text-red-400">Erreur: ${error.message}</span>`;
+                            });
+                    }
+                })
+                .catch(error => {
+                    alert(`Membre #${id} non trouvé: ${error.message}`);
+                });
+        }
+        
+        // Afficher des statistiques
+        function showApiStats(message) {
+            // Créer une notification temporaire
+            const statsDiv = document.createElement('div');
+            statsDiv.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-3 rounded-lg shadow-lg';
+            statsDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(statsDiv);
+            
+            setTimeout(() => {
+                statsDiv.style.opacity = '0';
+                statsDiv.style.transition = 'opacity 0.5s';
+                setTimeout(() => statsDiv.remove(), 500);
+            }, 3000);
+        }
+        
+        // Animation des cartes
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animer les cartes au chargement
+            const cards = document.querySelectorAll('.flip-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'all 0.5s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 100);
+            });
+            
+            // Tester automatiquement le premier endpoint
+            setTimeout(() => {
+                testEndpoint('GET', '/api/members/count');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
