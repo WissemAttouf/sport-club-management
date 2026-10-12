@@ -1,226 +1,267 @@
-# Sport Club Management
+# 🏟️ Sport Club Management
 
-A Spring Boot web application for presenting a sports club and managing its members. The project combines server-rendered pages with a REST API, persistence through Spring Data JPA, API documentation, automated tests, and deployment/monitoring configuration files.
+Application web de gestion d’un club sportif, développée avec **Java 17 et Spring Boot**. Le projet propose un site web rendu côté serveur avec Thymeleaf, une API REST pour gérer les membres, une documentation OpenAPI/Swagger et une configuration Docker.
 
-> **Project status:** The source code and configuration files are present in the repository, but the Docker, Kubernetes, CI/CD, and monitoring setups should be validated before being used in a production environment. See [Configuration notes](#configuration-notes).
+<p align="center">
+  <strong>Spring Boot · Java 17 · Maven · Thymeleaf · Spring Data JPA · H2 · Docker</strong>
+</p>
 
-## Overview
+## 📌 Présentation
 
-The application provides a small public-facing website and a member-management API.
+Sport Club Management centralise les principales opérations liées aux membres d’un club sportif et présente les informations du club à travers plusieurs pages web.
 
-### Web pages
+### Fonctionnalités
 
-The Spring MVC controllers expose these pages:
+- 🏠 Page d’accueil et pages de présentation du club.
+- 👥 Consultation et gestion des membres via une API REST.
+- 🔎 Recherche de membres par nom.
+- 🔢 Comptage du nombre de membres.
+- 🧾 Création, consultation, modification et suppression des membres.
+- 📚 Documentation de l’API avec OpenAPI et Swagger UI.
+- 🧪 Tests automatisés avec l’écosystème de test Spring Boot.
+- 🐳 Image Docker multi-stage pour construire et exécuter l’application.
 
-- `/` — Home
-- `/members` — Members page
-- `/about` — About the club
-- `/activities` — Sports activities
-- `/contact` — Contact page
+## 🖥️ Démo en ligne
 
-The pages are rendered with Thymeleaf templates in `src/main/resources/templates`.
+| Ressource | Lien |
+|---|---|
+| Application déployée sur Railway | [Ouvrir l’application](https://sport-club-management-production-6f45.up.railway.app/) |
+| API — liste des membres | [GET /api/members](https://sport-club-management-production-6f45.up.railway.app/api/members) |
+| Documentation Swagger UI | [Ouvrir Swagger](https://sport-club-management-production-6f45.up.railway.app/swagger-ui.html) |
+| OpenAPI JSON | [Voir le document OpenAPI](https://sport-club-management-production-6f45.up.railway.app/api-docs) |
 
-### Member management API
+> **À propos des données :** la configuration actuelle utilise une base H2 en mémoire. Les données peuvent donc être réinitialisées lorsque l’application redémarre. Pour une utilisation durable en production, configurez une base de données persistante.
 
-The REST API is rooted at `/api/members`.
+## 🧰 Technologies
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/members` | List all members |
-| `GET` | `/api/members/{id}` | Retrieve a member by ID |
-| `POST` | `/api/members` | Create a member |
-| `PUT` | `/api/members/{id}` | Update a member |
-| `DELETE` | `/api/members/{id}` | Delete a member |
-| `GET` | `/api/members/search?name={lastName}` | Search members by last name, ignoring case |
-| `GET` | `/api/members/count` | Return the total number of members |
+| Technologie | Utilisation |
+|---|---|
+| Java 17 | Langage de développement |
+| Spring Boot 3.2.3 | Framework applicatif |
+| Spring Web / Spring MVC | Pages web et endpoints REST |
+| Spring Data JPA | Accès aux données |
+| Thymeleaf | Rendu des pages HTML côté serveur |
+| H2 Database | Base de données par défaut |
+| Springdoc OpenAPI / Swagger UI | Documentation de l’API |
+| Maven | Gestion des dépendances et compilation |
+| JUnit / Spring Boot Test | Tests automatisés |
+| Docker | Conteneurisation |
+| GitHub Actions | Workflows CI présents dans le dépôt |
+| JaCoCo / SonarCloud | Configuration de couverture et d’analyse du code |
 
-The API uses JSON request and response bodies for member operations. The controller documents its operations with OpenAPI annotations.
+## 🏗️ Architecture du projet
 
-### Member data
-
-The JPA `Member` entity contains:
-
-- `id` — generated identifier
-- `firstName` and `lastName` — required name fields
-- `email` — unique when provided
-- `phone`
-- `birthDate`
-- `address`
-- `registrationDate` — defaults to the current date
-- `status` — defaults to `ACTIVE`; the model comment also mentions `INACTIVE` and `PENDING`
-
-The service checks for an existing email when creating a member and checks for existence before deletion. The current implementation does not yet provide a dedicated, consistent API error contract for all invalid or missing-resource cases.
-
-## Technology stack
-
-- **Java 17**
-- **Spring Boot 3.2.3**
-- Spring MVC / Spring Web
-- Spring Data JPA
-- Thymeleaf
-- Bean Validation dependency
-- H2 database for the default local configuration and tests
-- Lombok
-- Springdoc OpenAPI / Swagger UI
-- Spring Boot Actuator
-- Micrometer Prometheus registry
-- Maven
-- Docker and Docker Compose configuration
-- Kubernetes manifests
-- GitHub Actions workflow files
-- JaCoCo, SonarCloud and Cucumber test dependencies
-
-## Architecture
-
-The application follows a layered Spring Boot structure:
+L’application suit une architecture Spring Boot en couches :
 
 ```text
-src/main/java/com/sportclub/
-├── SportClubApplication.java
-├── controller/
-│   ├── MainController.java
-│   ├── MemberController.java
-│   └── GlobalController.java
-├── model/
-│   └── Member.java
-├── repository/
-│   └── MemberRepository.java
-└── service/
-    └── MemberService.java
-
-src/main/resources/
-├── application.properties
-├── application-docker.properties
-├── application-monitoring.properties
-└── templates/
-    ├── layout.html
-    ├── index.html
-    ├── members.html
-    ├── about.html
-    ├── activities.html
-    └── contact.html
+sport-club-management/
+├── .github/
+│   └── workflows/             # Workflows GitHub Actions
+├── src/
+│   ├── main/
+│   │   ├── java/com/sportclub/
+│   │   │   ├── controller/    # Contrôleurs MVC et REST
+│   │   │   ├── model/         # Entités JPA
+│   │   │   ├── repository/    # Accès aux données
+│   │   │   └── service/       # Logique métier
+│   │   └── resources/
+│   │       ├── templates/     # Pages Thymeleaf
+│   │       └── application.properties
+│   └── test/                  # Tests automatisés
+├── Dockerfile
+├── docker-compose.yml
+├── pom.xml
+└── README.md
 ```
 
-- **Controllers** handle page navigation and HTTP requests.
-- **Service** contains member-management operations.
-- **Repository** uses Spring Data JPA to access member records.
-- **Model** defines the persisted member entity.
-- **Thymeleaf templates** render the web pages.
+### Pages web
 
-## Prerequisites
+Les routes web disponibles sont :
 
-For local development, install:
+| Route | Description |
+|---|---|
+| `/` | Accueil |
+| `/members` | Membres |
+| `/about` | À propos |
+| `/activities` | Activités sportives |
+| `/contact` | Contact |
+
+## 🔌 API REST des membres
+
+La base de l’API est :
+
+```text
+https://sport-club-management-production-6f45.up.railway.app/api/members
+```
+
+| Méthode | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/members` | Liste tous les membres |
+| `GET` | `/api/members/{id}` | Récupère un membre par son identifiant |
+| `POST` | `/api/members` | Crée un membre |
+| `PUT` | `/api/members/{id}` | Modifie un membre |
+| `DELETE` | `/api/members/{id}` | Supprime un membre |
+| `GET` | `/api/members/search?name={nom}` | Recherche par nom |
+| `GET` | `/api/members/count` | Retourne le nombre de membres |
+
+### Exemple : lister les membres
+
+```bash
+curl https://sport-club-management-production-6f45.up.railway.app/api/members
+```
+
+### Exemple : créer un membre
+
+Le corps JSON doit correspondre aux champs de l’entité `Member`. Exemple indicatif :
+
+```json
+{
+  "firstName": "Amine",
+  "lastName": "Ben Salah",
+  "email": "amine@example.com",
+  "phone": "+216 00 000 000",
+  "address": "Tunis"
+}
+```
+
+Exemple de requête :
+
+```bash
+curl -X POST \
+  "https://sport-club-management-production-6f45.up.railway.app/api/members" \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Amine","lastName":"Ben Salah","email":"amine@example.com","phone":"+216 00 000 000","address":"Tunis"}'
+```
+
+Les valeurs de cet exemple sont fictives. Pour consulter le schéma complet et essayer les endpoints, utilisez Swagger UI.
+
+## 🚀 Installation et lancement en local
+
+### Prérequis
 
 - JDK 17
 - Git
-- Maven, or use the included Maven Wrapper
+- Maven, ou le Maven Wrapper inclus dans le dépôt
+- Docker (facultatif, pour lancer l’application en conteneur)
 
-Docker is only needed if you want to work with the provided container configuration.
-
-## Run locally
-
-The default `application.properties` configuration uses an **in-memory H2 database**. Data in this database is not intended to persist after the application stops.
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/WissemAttouf/sport-club-management.git
-   cd sport-club-management
-   ```
-
-2. Start the application with the Maven Wrapper:
-
-   **Linux/macOS**
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-
-   **Windows**
-   ```powershell
-   .\mvnw.cmd spring-boot:run
-   ```
-
-3. Open the site at [http://localhost:8083](http://localhost:8083).
-
-The default application port is set to `8083` in `src/main/resources/application.properties`.
-
-## API documentation
-
-The repository configures Springdoc with these paths:
-
-- Swagger UI: [http://localhost:8083/swagger-ui.html](http://localhost:8083/swagger-ui.html)
-- OpenAPI JSON: [http://localhost:8083/api-docs](http://localhost:8083/api-docs)
-
-These links are available when the application starts successfully with the current configuration.
-
-## Run tests
-
-Run the automated test suite with:
+### 1. Cloner le dépôt
 
 ```bash
-./mvnw test
+git clone https://github.com/WissemAttouf/sport-club-management.git
+cd sport-club-management
 ```
 
-On Windows:
+### 2. Démarrer avec Maven
+
+**Windows PowerShell :**
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+**Linux / macOS :**
+
+```bash
+./mvnw spring-boot:run
+```
+
+L’application utilise par défaut le port `8080` (ou la valeur de la variable d’environnement `PORT`). Ouvrez ensuite :
+
+- Site : [http://localhost:8080](http://localhost:8080)
+- API : [http://localhost:8080/api/members](http://localhost:8080/api/members)
+- Swagger UI : [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- OpenAPI JSON : [http://localhost:8080/api-docs](http://localhost:8080/api-docs)
+
+### 3. Exécuter les tests
+
+**Windows PowerShell :**
 
 ```powershell
 .\mvnw.cmd test
 ```
 
-Tests are located under `src/test/java`. The repository includes Spring Boot application, controller, service, and repository tests, and uses an H2 in-memory database through `src/test/resources/application-test.properties`.
+**Linux / macOS :**
 
-A test runner script, `run-tests.sh`, and a Docker Compose test configuration are also present. Their full integration-test workflow should be checked before relying on them in CI.
-
-## Docker, Kubernetes and monitoring
-
-The repository includes configuration files for the following workflows:
-
-- **Docker:** `Dockerfile`, `docker-compose.yml`
-- **Docker test environment:** `docker-compose.test.yml`
-- **Monitoring:** `docker-compose.monitoring.yml`, `prometheus/prometheus.yml`, `grafana/datasources.yml`
-- **Kubernetes:** manifests under `k8s/`
-- **CI:** `.github/workflows/ci.yml`
-- **Tag-triggered Kubernetes deployment workflow:** `.github/workflows/deploy.yml`
-- **Code coverage and analysis:** JaCoCo and SonarCloud configuration
-
-These files document the intended tooling, but their presence does not guarantee that the complete deployment pipeline currently works end to end.
-
-### Configuration notes
-
-Before using the container or deployment configurations, review these repository-specific details:
-
-1. **Port mismatch:** the default application configuration sets port `8083`, while the Dockerfile and Compose port mapping use `8080`. Align the application and container ports before running the container.
-2. **Database driver:** the Docker profile references MySQL and `com.mysql.cj.jdbc.Driver`, but the current `pom.xml` lists H2 and does not declare the MySQL Connector/J dependency. Add and verify the driver before using the MySQL profile.
-3. **Credentials:** database and monitoring credentials are currently specified directly in configuration files. Replace them with environment variables or a secrets manager; do not use the repository's sample values in a real environment.
-4. **Kubernetes and CI/CD:** confirm that the selected Spring profile, image name/registry, database connection, service ports, and required GitHub Actions secrets match the target cluster.
-5. **Monitoring:** confirm that the application, Prometheus and Grafana share the expected network and that the Prometheus scrape target is reachable.
-6. **Production hardening:** review database schema management, H2 console exposure, Actuator endpoint access, input validation, and access control before exposing the application publicly.
-
-## Repository layout
-
-```text
-.
-├── .github/workflows/       # GitHub Actions workflows
-├── docker/                  # Docker helper scripts
-├── grafana/                 # Grafana datasource configuration
-├── k8s/                     # Kubernetes manifests and helper script
-├── prometheus/              # Prometheus configuration
-├── src/main/java/           # Application source code
-├── src/main/resources/      # Properties and Thymeleaf templates
-├── src/test/                # Automated tests and test properties
-├── Dockerfile
-├── docker-compose.yml
-├── docker-compose.test.yml
-├── docker-compose.monitoring.yml
-├── pom.xml
-├── mvnw
-└── run-tests.sh
+```bash
+./mvnw test
 ```
 
-## Contributing
+## 🐳 Lancer avec Docker
 
-Contributions and issue reports are welcome. When proposing a change, please include a clear description of the problem, the expected behavior, and the tests performed.
+Depuis la racine du dépôt :
 
-## License
+### Construire l’image
 
-No license file is currently present in the repository. Unless a license is added, reuse and redistribution permissions should not be assumed.
+```bash
+docker build -t sport-club-management .
+```
+
+### Démarrer le conteneur
+
+```bash
+docker run --rm -p 8080:8080 -e PORT=8080 sport-club-management
+```
+
+Puis ouvrez [http://localhost:8080](http://localhost:8080).
+
+Le Dockerfile utilise une étape Maven avec Java 17 pour construire le JAR, puis une image d’exécution Java 17 plus légère. La commande de build actuelle ignore l’exécution des tests ; lancez les tests séparément avant une livraison.
+
+## ☁️ Déploiement
+
+### Backend — Railway
+
+Le backend est déployé sur Railway :
+
+```text
+https://sport-club-management-production-6f45.up.railway.app
+```
+
+Le domaine public peut être utilisé pour tester les pages et l’API. La disponibilité effective de chaque route dépend de l’état du déploiement.
+
+### Frontend séparé — Vercel
+
+Le code actuel contient des pages Thymeleaf servies par Spring Boot. Si un frontend statique séparé est ajouté au dépôt, configurez Vercel pour utiliser son dossier comme **Root Directory** et faites appeler l’API Railway depuis ce frontend. Le dossier frontend séparé et sa configuration Vercel doivent être présents dans le dépôt avant de configurer ce déploiement.
+
+Si le frontend appelle l’API depuis un autre domaine, configurez également CORS côté Spring Boot pour autoriser uniquement les origines nécessaires.
+
+## 🖼️ Captures d’écran
+
+Les captures réelles de l’application ne sont pas intégrées à ce dépôt pour le moment. Pour illustrer le README, ajoutez des images prises depuis l’application dans `docs/screenshots/`, par exemple :
+
+- `home.png` — page d’accueil
+- `members.png` — page des membres
+- `swagger.png` — documentation de l’API
+
+Une fois les fichiers ajoutés, affichez-les avec Markdown, par exemple :
+
+```markdown
+![Page d’accueil](docs/screenshots/home.png)
+```
+
+Utilisez de véritables captures du projet afin que la documentation reflète l’interface réellement déployée.
+
+## 🔐 Points à vérifier avant une utilisation en production
+
+- Remplacer H2 en mémoire par une base persistante si les données doivent survivre aux redémarrages.
+- Désactiver ou sécuriser la console H2 avant d’exposer l’application publiquement.
+- Vérifier les règles CORS si un frontend séparé est déployé.
+- Externaliser les identifiants et secrets dans des variables d’environnement.
+- Vérifier les ports, profils Spring et paramètres de base de données pour chaque environnement.
+- Exécuter les tests et valider les workflows Docker, CI/CD, Kubernetes et monitoring avant de s’appuyer sur eux en production.
+
+## 🤝 Contribution
+
+Les suggestions et signalements de bugs sont les bienvenus. Pour proposer une amélioration :
+
+1. Créez une branche dédiée.
+2. Décrivez clairement le changement.
+3. Ajoutez ou adaptez les tests lorsque c’est pertinent.
+4. Ouvrez une Pull Request avec les étapes de vérification.
+
+## 📄 Licence
+
+Aucun fichier de licence n’est actuellement déclaré dans le dépôt. En l’absence de licence, les droits de réutilisation et de redistribution ne doivent pas être présumés.
+
+---
+
+Développé avec **Java, Spring Boot et Docker**.
