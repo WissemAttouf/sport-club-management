@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#10251e" />
+  <meta name="description" content="Sport Club — découvrez notre club, nos activités et notre communauté sportive." />
+  <title>Sport Club — Bougez avec nous</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="Sport Club, accueil"><span class="brand-mark">S</span><span>SPORT<span class="brand-light">CLUB</span></span></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+    <nav id="mainNav" class="main-nav" aria-label="Navigation principale">
+      <a class="nav-link active" href="#home">Accueil</a><a class="nav-link" href="#about">Le club</a><a class="nav-link" href="#activities">Activités</a><a class="nav-link" href="#members">Membres</a><a class="nav-link" href="#contact">Contact</a>
+      <a class="nav-cta" href="#contact">Nous rejoindre <span>↗</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-grid"></div>
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="status-dot"></span> PLUS QU'UN CLUB, UNE ÉQUIPE</div>
+        <h1>Repousse tes<br /><em>limites.</em> Ensemble.</h1>
+        <p class="hero-text">Un esprit d'équipe, de l'énergie et des objectifs qui nous font avancer. Trouve ta discipline et rejoins une communauté qui te motive.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#activities">Explorer les activités <span>↗</span></a><a class="button button-ghost" href="#about"><span class="play-icon">▶</span> Découvrir le club</a></div>
+        <div class="hero-stats"><div><strong>100<span>+</span></strong><small>Objectifs à atteindre</small></div><div><strong>5<span>★</span></strong><small>Esprit d'équipe</small></div><div><strong>1</strong><small>Communauté</small></div></div>
+      </div>
+      <div class="hero-visual" aria-label="Athlète en entraînement">
+        <div class="visual-image"></div><div class="image-shade"></div>
+        <div class="vertical-label">DISCIPLINE · ÉNERGIE · PROGRÈS</div>
+        <div class="floating-card"><span class="floating-icon">✦</span><div><strong>Chaque jour compte</strong><small>Ton prochain niveau commence ici.</small></div></div>
+        <div class="hero-number">01 <span>/ 03</span></div>
+      </div>
+      <div class="scroll-cue"><span></span> DÉFILER POUR DÉCOUVRIR</div>
+    </section>
+
+    <section class="intro section-pad" id="about">
+      <div class="section-kicker">01 / NOTRE PHILOSOPHIE</div>
+      <div class="intro-layout"><h2>Le sport nous rassemble.<br /><span>Le collectif nous élève.</span></h2><div class="intro-copy"><p>Le Sport Club est un espace où chacun peut progresser à son rythme, apprendre des autres et célébrer chaque victoire — petite ou grande.</p><a class="text-link" href="#contact">Découvrir notre approche <span>↗</span></a></div></div>
+      <div class="values-grid"><article class="value-card"><span class="value-number">01</span><div class="value-icon">↗</div><h3>Progresser</h3><p>Des objectifs concrets, des efforts réguliers et des progrès dont tu peux être fier.</p></article><article class="value-card"><span class="value-number">02</span><div class="value-icon">◎</div><h3>Se dépasser</h3><p>Découvre ton potentiel dans un environnement positif et motivant.</p></article><article class="value-card"><span class="value-number">03</span><div class="value-icon">✳</div><h3>Partager</h3><p>Une équipe qui t'encourage, t'accueille et avance avec toi.</p></article></div>
+    </section>
+
+    <section class="activities section-pad" id="activities">
+      <div class="section-kicker">02 / TROUVE TON RYTHME</div><div class="section-heading"><h2>Une énergie.<br /><span>Plusieurs façons de bouger.</span></h2><p>Choisis ta manière de te challenger. Notre équipe t'aide à trouver l'activité qui te correspond.</p></div>
+      <div class="activity-grid"><article class="activity-card activity-one"><div class="activity-bg bg-one"></div><div class="activity-top"><span>01</span><span class="activity-arrow">↗</span></div><div class="activity-content"><span class="activity-tag">FORCE &amp; ENDURANCE</span><h3>Fitness</h3><p>Construis ta force, ton endurance et ta confiance.</p></div></article><article class="activity-card activity-two"><div class="activity-bg bg-two"></div><div class="activity-top"><span>02</span><span class="activity-arrow">↗</span></div><div class="activity-content"><span class="activity-tag">STRATÉGIE &amp; ÉQUIPE</span><h3>Sports collectifs</h3><p>Joue ensemble, progresse ensemble, gagne ensemble.</p></div></article><article class="activity-card activity-three"><div class="activity-bg bg-three"></div><div class="activity-top"><span>03</span><span class="activity-arrow">↗</span></div><div class="activity-content"><span class="activity-tag">MOBILITÉ &amp; ÉQUILIBRE</span><h3>Bien-être</h3><p>Prends soin de ton corps et retrouve ton équilibre.</p></div></article></div>
+      <p class="demo-note">Les activités ci-dessus sont une présentation de démonstration. Remplace-les par les disciplines réellement proposées par ton club.</p>
+    </section>
+
+    <section class="members section-pad" id="members"><div class="members-panel"><div class="members-copy"><div class="section-kicker">03 / NOTRE COMMUNAUTÉ</div><h2>La force du club,<br /><span>ce sont ses membres.</span></h2><p>Retrouve les membres enregistrés dans notre application. Cette section se connecte à l'API Spring Boot hébergée sur Railway.</p><button class="button button-primary" id="reloadMembers">Actualiser les membres <span>↻</span></button></div><div class="members-result"><div class="result-header"><span>ANNUAIRE DU CLUB</span><span class="live-label"><i></i> API LIVE</span></div><div id="apiStatus" class="api-status">Connexion à l'API en cours…</div><div id="membersList" class="members-list" aria-live="polite"></div></div></div></section>
+
+    <section class="contact section-pad" id="contact"><div class="section-kicker">04 / LE PREMIER PAS</div><div class="contact-layout"><h2>Prêt à faire<br /><em>partie de l'équipe ?</em></h2><div><p>Une question sur le club ou envie de nous rejoindre ? Contacte l'équipe pour obtenir les informations pratiques.</p><a class="button button-dark" href="mailto:contact@sportclub.example">Nous contacter <span>↗</span></a><small class="demo-note">Pense à remplacer cette adresse e-mail de démonstration par la vraie adresse du club.</small></div></div></section>
+  </main>
+
+  <footer class="site-footer"><a class="brand footer-brand" href="#home"><span class="brand-mark">S</span><span>SPORT<span class="brand-light">CLUB</span></span></a><p>Le progrès se construit ensemble.</p><span>© <span id="year"></span> Sport Club</span></footer>
+  <script src="./app.js"></script>
+</body>
+</html>
