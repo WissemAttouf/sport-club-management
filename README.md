@@ -8,10 +8,6 @@ Application web de gestion des membres d’un club sportif, développée avec **
 
 L’application centralise les opérations courantes de consultation et de gestion des membres d’un club. Elle constitue également un projet pratique pour travailler sur l’architecture Spring Boot, la persistance JPA, la documentation d’API et l’automatisation des tests.
 
-## 📸 Captures d’écran
-
-### Aperçu de l’application
-
 <p align="center">
   <img src="docs/images/sport.PNG" alt="Capture d’écran de Sport Club Management" width="800">
 </p>
@@ -134,3 +130,9 @@ mvn test
 
 **Wissem Attouf** — Ingénieur logiciel | Développeur Full Stack  
 [GitHub](https://github.com/WissemAttouf) · [LinkedIn](https://www.linkedin.com/in/wissem-attouf-452509226/) · [Portfolio](https://wissem-portfolio.vercel.app/) · [E-mail](mailto:wattouf35@gmail.com)
+
+---
+
+## 📸 Captures d’écran
+
+### Aperçu de l’application
