@@ -110,12 +110,6 @@ Consultez la configuration du projet pour connaître le port et les paramètres 
 mvn test
 ```
 
-## Auteur
-
-**Wissem Attouf** — Ingénieur logiciel | Développeur Full Stack  
-[GitHub](https://github.com/WissemAttouf) · [LinkedIn](https://www.linkedin.com/in/wissem-attouf-452509226/) · [Portfolio](https://wissem-portfolio.vercel.app/) · [E-mail](mailto:wattouf35@gmail.com)
-
----
 
 ## 📸 Captures d’écran
 
@@ -136,3 +130,12 @@ mvn test
   <br><strong>Vue complémentaire</strong>
   <br><em>Troisième aperçu de l’interface du projet.</em>
 </p>
+
+---
+
+## Auteur
+
+**Wissem Attouf** — Ingénieur logiciel | Développeur Full Stack  
+[GitHub](https://github.com/WissemAttouf) · [LinkedIn](https://www.linkedin.com/in/wissem-attouf-452509226/) · [Portfolio](https://wissem-portfolio.vercel.app/) · [E-mail](mailto:wattouf35@gmail.com)
+
+---
