@@ -8,22 +8,6 @@ Application web de gestion des membres d’un club sportif, développée avec **
 
 L’application centralise les opérations courantes de consultation et de gestion des membres d’un club. Elle constitue également un projet pratique pour travailler sur l’architecture Spring Boot, la persistance JPA, la documentation d’API et l’automatisation des tests.
 
-<p align="center">
-  <img src="docs/images/sport.PNG" alt="Capture d’écran de Sport Club Management" width="800">
-</p>
-
-### Gestion du club sportif
-
-<p align="center">
-  <img src="docs/images/sport2.PNG" alt="Deuxième capture d’écran de Sport Club Management" width="800">
-</p>
-
-### Vue complémentaire
-
-<p align="center">
-  <img src="docs/images/sport3.PNG" alt="Troisième capture d’écran de Sport Club Management" width="800">
-</p>
-
 ## Fonctionnalités
 
 - Page d’accueil et pages de présentation du club.
@@ -135,4 +119,20 @@ mvn test
 
 ## 📸 Captures d’écran
 
-### Aperçu de l’application
+<p align="center">
+  <img src="docs/images/sport.PNG" alt="Aperçu principal — sport-club-management" width="800">
+  <br><strong>Aperçu principal</strong>
+  <br><em>Vue d’ensemble de l’interface de Sport Club Management.</em>
+</p>
+
+<p align="center">
+  <img src="docs/images/sport2.PNG" alt="Gestion du club — sport-club-management" width="800">
+  <br><strong>Gestion du club</strong>
+  <br><em>Vue complémentaire de l’application de gestion du club sportif.</em>
+</p>
+
+<p align="center">
+  <img src="docs/images/sport3.PNG" alt="Vue complémentaire — sport-club-management" width="800">
+  <br><strong>Vue complémentaire</strong>
+  <br><em>Troisième aperçu de l’interface du projet.</em>
+</p>
