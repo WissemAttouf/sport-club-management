@@ -1,14 +1,14 @@
-# Sport Club Management — Gestion d’un club sportif
+# 💻 Sport Club Management — Gestion d’un club sportif
 
 Application web de gestion des membres d’un club sportif, développée avec **Java 17 et Spring Boot**. Le projet combine des pages web rendues avec Thymeleaf et une API REST documentée avec OpenAPI/Swagger.
 
 <p align="center"><strong>Java 17 · Spring Boot · Maven · Thymeleaf · Spring Data JPA · H2 · Docker</strong></p>
 
-## Présentation
+## 📌 Présentation
 
 L’application centralise les opérations courantes de consultation et de gestion des membres d’un club. Elle constitue également un projet pratique pour travailler sur l’architecture Spring Boot, la persistance JPA, la documentation d’API et l’automatisation des tests.
 
-## Fonctionnalités
+## ✨ Fonctionnalités
 
 - Page d’accueil et pages de présentation du club.
 - Consultation et gestion des membres.
@@ -19,7 +19,7 @@ L’application centralise les opérations courantes de consultation et de gesti
 - Tests automatisés avec l’écosystème Spring Boot Test.
 - Configuration Docker pour construire et exécuter l’application.
 
-## Démonstration
+## 🚀 Démonstration
 
 | Ressource | Lien |
 |---|---|
@@ -30,7 +30,7 @@ L’application centralise les opérations courantes de consultation et de gesti
 
 > La configuration documentée utilise une base H2 en mémoire. Les données peuvent être réinitialisées au redémarrage de l’application. Une base persistante doit être configurée pour un usage durable.
 
-## Technologies
+## 🛠️ Technologies
 
 - **Langage et framework :** Java 17, Spring Boot
 - **Web :** Spring Web, Spring MVC, Thymeleaf
@@ -39,7 +39,7 @@ L’application centralise les opérations courantes de consultation et de gesti
 - **Build et tests :** Maven, JUnit, Spring Boot Test
 - **Déploiement et qualité :** Docker, GitHub Actions, configuration JaCoCo/SonarCloud
 
-## Architecture
+## 🗂️ Architecture
 
 ```text
 sport-club-management/
@@ -59,7 +59,7 @@ sport-club-management/
 └── README.md
 ```
 
-## Routes principales
+## 🔌 Routes principales
 
 | Route | Description |
 |---|---|
@@ -69,7 +69,7 @@ sport-club-management/
 | `/activities` | Activités sportives |
 | `/contact` | Contact |
 
-## API REST
+## 🔌 API REST
 
 Base de l’API : `https://sport-club-management-production-6f45.up.railway.app/api/members`
 
@@ -89,14 +89,14 @@ Exemple de consultation :
 curl https://sport-club-management-production-6f45.up.railway.app/api/members
 ```
 
-## Installation locale
+## ⚙️ Installation locale
 
-### Prérequis
+### ⚙️ Prérequis
 - JDK 17
 - Maven (ou le Maven Wrapper s’il est présent)
 - Git
 
-### Lancer le projet
+### ⚙️ Lancer le projet
 
 ```bash
 git clone https://github.com/WissemAttouf/sport-club-management.git
@@ -133,7 +133,7 @@ mvn test
 
 ---
 
-## Auteur
+## 👨‍💻 Auteur
 
 **Wissem Attouf** — Ingénieur logiciel | Développeur Full Stack  
 [GitHub](https://github.com/WissemAttouf) · [LinkedIn](https://www.linkedin.com/in/wissem-attouf-452509226/) · [Portfolio](https://wissem-portfolio.vercel.app/) · [E-mail](mailto:wattouf35@gmail.com)
