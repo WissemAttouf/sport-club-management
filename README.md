@@ -1,6 +1,8 @@
 # 💻 Sport Club Management — Gestion d’un club sportif
 
-Application web de gestion des membres d’un club sportif, développée avec **Java 17 et Spring Boot**. Le projet combine des pages web rendues avec Thymeleaf et une API REST documentée avec OpenAPI/Swagger.
+Application web de gestion des membres d’un club sportif, développée avec **Java 17 et Spring Boot**. Le projet combine des pages web rendues avec Thymeleaf, une couche de persistance Spring Data JPA et une API REST documentée avec OpenAPI/Swagger.
+
+> **Résumé pour recruteurs :** projet pratique mettant en œuvre le développement backend Java, la gestion des données, la documentation d’API et les tests automatisés. Les fonctionnalités de sécurité doivent être décrites uniquement si elles sont présentes et vérifiables dans le code.
 
 <p align="center"><strong>Java 17 · Spring Boot · Maven · Thymeleaf · Spring Data JPA · H2 · Docker</strong></p>
 
