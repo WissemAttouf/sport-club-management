@@ -50,6 +50,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Build image
         run: docker build --tag sport-club-management:${{ github.sha }} .
+      - name: Install YAML validator
+        run: python -m pip install --disable-pip-version-check pyyaml
       - name: Validate Kubernetes manifests
         run: |
           python - <<'PY'
