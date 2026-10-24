@@ -141,3 +141,67 @@ mvn test
 [GitHub](https://github.com/WissemAttouf) · [LinkedIn](https://www.linkedin.com/in/wissem-attouf-452509226/) · [Portfolio](https://wissem-portfolio.vercel.app/) · [E-mail](mailto:wattouf35@gmail.com)
 
 ---
+
+## 🐳 Docker, Kubernetes et CI/CD
+
+Le dépôt comprend une configuration de développement pour exécuter l'application avec MySQL, ainsi que des manifests Kubernetes pour un cluster local Docker Desktop.
+
+### Docker Compose
+
+1. Copier `.env.example` vers `.env` et remplacer les valeurs d'exemple par des mots de passe forts.
+2. Construire et démarrer les services :
+
+```bash
+docker compose up --build -d
+docker compose ps
+docker compose logs -f app
+```
+
+L'application est disponible sur [http://localhost:8080](http://localhost:8080). Pour arrêter les services sans supprimer les données MySQL :
+
+```bash
+docker compose down
+```
+
+Pour supprimer également le volume de données, utiliser `docker compose down -v` uniquement si la perte des données est voulue.
+
+### Kubernetes local avec Docker Desktop
+
+Activer Kubernetes dans Docker Desktop et vérifier le contexte :
+
+```bash
+kubectl config current-context
+kubectl get nodes
+docker build -t sport-club-management:dev .
+```
+
+Créer localement `k8s/secret.yaml` à partir de `k8s/secret.example.yaml`, remplacer les valeurs fictives par des mots de passe forts, puis appliquer les ressources :
+
+```bash
+kubectl apply -f k8s/secret.yaml
+kubectl apply -f k8s/mysql.yaml
+kubectl apply -f k8s/configmap.yaml
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+kubectl rollout status statefulset/sport-club-db
+kubectl rollout status deployment/sport-club-management
+kubectl get pods,svc,pvc
+```
+
+L'application est exposée localement sur [http://localhost:30080](http://localhost:30080). Pour consulter les logs :
+
+```bash
+kubectl logs deployment/sport-club-management
+kubectl logs statefulset/sport-club-db
+```
+
+> **Sécurité :** ne committez jamais `.env` ni `k8s/secret.yaml`. Le fichier `k8s/secret.example.yaml` est un modèle, pas un secret prêt à appliquer. Les secrets Kubernetes standards sont encodés, pas chiffrés par défaut ; pour un environnement partagé ou de production, utilisez un gestionnaire de secrets et configurez le chiffrement au repos.
+
+### GitHub Actions
+
+- `.github/workflows/ci.yml` exécute les tests Maven, construit l'image Docker et vérifie la syntaxe YAML des manifests Kubernetes.
+- `.github/workflows/deploy.yml` vérifie séparément les manifests Kubernetes.
+- Le déploiement sur un cluster distant n'est volontairement pas automatisé tant que le cluster cible, les permissions et la stratégie de gestion des secrets ne sont pas configurés.
+
+Les exécutions et leurs résultats sont visibles dans l'onglet **Actions** du dépôt GitHub.
+
