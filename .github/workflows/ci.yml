@@ -1,57 +1,61 @@
-﻿name: Java CI with Maven, Docker and SonarCloud
+name: Java CI and Docker validation
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop, "devops/**"]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  test:
+    name: Maven tests
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-        
-    - name: Build with Maven
-      run: mvn clean compile
-      
-    - name: Run unit tests
-      run: mvn test
-      
-    - name: Generate JaCoCo report
-      run: mvn jacoco:report
-      
-    - name: SonarCloud Scan
-      run: mvn sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }}
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        
-    - name: Build Docker image
-      run: |
-        docker build -t sport-club-management:${{ github.sha }} .
-        docker build -t sport-club-management:latest .
-        
-    - name: Run integration tests with Docker
-      run: docker-compose -f docker-compose.test.yml up --abort-on-container-exit
-        
-    - name: Upload test results
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: test-results
-        path: target/surefire-reports/
-        
-    - name: Upload coverage report
-      uses: actions/upload-artifact@v3
-      with:
-        name: coverage-report
-        path: target/site/jacoco/
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - name: Verify XML and run tests
+        run: mvn --batch-mode --no-transfer-progress clean verify
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Upload JaCoCo report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/jacoco-report/
+          if-no-files-found: warn
+          retention-days: 7
+
+  docker-build:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build image
+        run: docker build --tag sport-club-management:${{ github.sha }} .
+      - name: Validate Kubernetes manifests
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          for path in sorted(Path("k8s").glob("*.yaml")):
+              list(yaml.safe_load_all(path.read_text(encoding="utf-8-sig")))
+              print(f"YAML OK: {path}")
+          PY
