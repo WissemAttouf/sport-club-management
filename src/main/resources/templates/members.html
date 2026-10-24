@@ -44,31 +44,22 @@
         .filter-pill:hover {
             transform: scale(1.05);
         }
+    /* SportClub Pro premium design system */
+:root{color-scheme:dark;--sc-bg:#0b1118;--sc-panel:#111a23;--sc-panel2:#16222d;--sc-line:rgba(255,255,255,.09);--sc-text:#f4f7f8;--sc-muted:#8d9ba7;--sc-lime:#c7f36b;--sc-shadow:0 22px 70px rgba(0,0,0,.24)}
+html{scroll-behavior:smooth}body{background:radial-gradient(ellipse at 75% -15%,rgba(112,159,75,.12),transparent 38%),var(--sc-bg)!important;color:var(--sc-text)!important;font-family:'DM Sans',sans-serif!important;font-size:14px}body *{scrollbar-color:#34434d #101820}a,button{transition:background .2s,color .2s,border-color .2s,transform .2s}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--sc-lime)!important;outline-offset:3px}
+.sc-topbar{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:22px;padding:14px clamp(18px,4vw,58px);border-bottom:1px solid var(--sc-line);background:rgba(11,17,24,.9);backdrop-filter:blur(18px);position:sticky;top:0;z-index:40}.sc-brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.04em;font-size:19px;color:#f4f7f8!important;white-space:nowrap}.sc-brand-mark{width:39px;height:39px;border-radius:13px;background:var(--sc-lime);color:#10170b;display:grid;place-items:center;font-size:18px;transform:rotate(-5deg)}.sc-lime{color:var(--sc-lime)}.sc-nav-links{display:flex;align-items:center;gap:6px}.sc-nav-links a{padding:11px 13px;border-radius:11px;color:#aeb9c2!important;font-weight:600;white-space:nowrap}.sc-nav-links a:hover,.sc-nav-links a.sc-active{background:rgba(255,255,255,.07);color:#fff!important}.sc-nav-links a.sc-active{box-shadow:inset 0 -2px var(--sc-lime)}.sc-live{display:flex;align-items:center;gap:8px;color:#c4d0d8;font-size:11px;border:1px solid var(--sc-line);border-radius:99px;padding:9px 12px;white-space:nowrap}.sc-live i{width:7px;height:7px;background:var(--sc-lime);border-radius:50%;box-shadow:0 0 0 4px rgba(199,243,107,.1)}.sc-menu-btn{display:none;background:var(--sc-panel);color:#fff;border:1px solid var(--sc-line);border-radius:12px;padding:10px 12px}
+body>nav:not(.sc-topbar){display:none!important}main.container,main{max-width:1440px!important;margin:0 auto!important;padding:clamp(24px,4vw,52px)!important}h1,h2,h3,h4{color:#f4f7f8!important;letter-spacing:-.025em}h1{font-family:'Barlow Condensed',sans-serif!important;font-size:clamp(40px,5vw,62px)!important;line-height:.98!important;text-transform:uppercase!important;font-weight:800!important;margin-bottom:12px!important}h1:after{content:'';display:block;width:56px;height:3px;background:var(--sc-lime);margin-top:15px}p{color:#a9b6bf}main>div:first-child{margin-bottom:30px!important}main>div:first-child p{color:var(--sc-muted)!important}
+.bg-white,.bg-gray-50,.bg-gray-100,.bg-gray-200,.bg-blue-50,.bg-green-50,.bg-red-50,.bg-yellow-50,.bg-purple-50{background:var(--sc-panel)!important;color:var(--sc-text)!important}.shadow,.shadow-lg,.shadow-xl,.shadow-2xl{box-shadow:var(--sc-shadow)!important}.rounded-lg,.rounded-xl,.rounded-2xl{border-radius:18px!important}.border,.border-gray-100,.border-gray-200,.border-gray-300{border-color:var(--sc-line)!important}.text-gray-900,.text-gray-800,.text-gray-700,.text-gray-600,.text-gray-500,.text-gray-400{color:#a9b6bf!important}.text-gray-900,.text-gray-800,.text-gray-700{color:#f4f7f8!important}.bg-gradient-to-r{background:var(--sc-panel)!important}.member-card,.activity-card{background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018))!important;border:1px solid var(--sc-line)!important;border-radius:20px!important;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s!important}.member-card:hover,.activity-card:hover{transform:translateY(-4px)!important;border-color:rgba(199,243,107,.38)!important;box-shadow:var(--sc-shadow)!important}.bg-blue-600,.bg-blue-500,.bg-indigo-600{background:var(--sc-lime)!important;color:#11180a!important}.hover\\:bg-blue-700:hover,.hover\\:bg-blue-800:hover{background:#d7ff82!important;color:#11180a!important}.text-blue-600,.text-blue-700,.text-blue-800{color:var(--sc-lime)!important}.bg-blue-100,.bg-green-100,.bg-purple-100,.bg-red-100,.bg-yellow-100{background:rgba(199,243,107,.09)!important}.text-green-600,.text-green-700{color:var(--sc-lime)!important}.status-active{background:rgba(199,243,107,.12)!important;color:var(--sc-lime)!important}.status-inactive{background:rgba(255,126,130,.12)!important;color:#ff7e82!important}.status-pending{background:rgba(255,199,107,.12)!important;color:#ffc76b!important}
+input,select,textarea{background:#0d151d!important;color:#f4f7f8!important;border:1px solid var(--sc-line)!important;border-radius:11px!important;padding-top:11px!important;padding-bottom:11px!important}input::placeholder,textarea::placeholder{color:#71818d!important}button{border-radius:11px!important}button:hover{filter:brightness(1.07)}table{color:#e7edf0!important}thead,.bg-gray-50{background:#16222d!important}th{color:#8d9ba7!important}td{border-color:var(--sc-line)!important}tr:hover td{background:rgba(255,255,255,.025)!important}.fixed.inset-0{backdrop-filter:blur(7px);background:rgba(2,6,10,.76)!important;z-index:70!important}.fixed.inset-0>div{background:#111a23!important;border:1px solid var(--sc-line)!important;border-radius:20px!important;color:#f4f7f8!important}.fixed.inset-0 label{color:#c5d0d7!important}.filter-pill{border:1px solid var(--sc-line)!important}.capacity-bar{background:#26343e!important;border-radius:99px!important}.capacity-fill{background:var(--sc-lime)!important;border-radius:99px!important}.calendar-day:hover{background:rgba(199,243,107,.07)!important}.calendar-day.active{background:var(--sc-lime)!important;color:#11180a!important}.activity-slot{background:#263b2d!important;border:1px solid rgba(199,243,107,.25)}#pagination button{border:1px solid var(--sc-line)!important;background:var(--sc-panel)!important;color:#e8eef1!important}#pagination button.bg-blue-600{background:var(--sc-lime)!important;color:#11180a!important}
+@media(max-width:900px){.sc-topbar{gap:12px}.sc-nav-links{gap:0}.sc-nav-links a{padding:10px 9px;font-size:12px}.sc-live{display:none}main.container,main{padding:24px!important}}
+@media(max-width:680px){.sc-topbar{min-height:68px;padding:12px 17px;flex-wrap:wrap}.sc-menu-btn{display:block;margin-left:auto}.sc-nav-links{display:none;order:4;flex-basis:100%;align-items:stretch;flex-direction:column;padding:9px;background:var(--sc-panel);border:1px solid var(--sc-line);border-radius:15px}.sc-nav-links.sc-open{display:flex}.sc-nav-links a{padding:12px;font-size:13px}main.container,main{padding:23px 16px!important}h1{font-size:44px!important}main .grid{gap:12px!important}#viewToggle{max-width:100%}#viewToggle button{padding:9px 12px}table{min-width:620px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <!-- Navigation (simplifiée) -->
-    <nav class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
-        <div class="container mx-auto px-6 py-3">
-            <div class="flex items-center justify-between">
-                <a href="/" class="flex items-center space-x-3">
-                    <i class="fas fa-running text-2xl"></i>
-                    <span class="text-xl font-bold">SportClub<span class="text-yellow-300">Pro</span></span>
-                </a>
-                <div class="flex items-center space-x-6">
-                    <a href="/" class="hover:text-yellow-300">
-                        <i class="fas fa-home mr-1"></i> Dashboard
-                    </a>
-                    <a href="/members" class="font-bold">
-                        <i class="fas fa-users mr-1"></i> Membres
-                    </a>
-                    <a href="/activities" class="hover:text-yellow-300">
-                        <i class="fas fa-futbol mr-1"></i> Activités
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <nav class="sc-topbar"><a href="/" class="sc-brand"><span class="sc-brand-mark"><i class="fas fa-bolt"></i></span><span>SPORTCLUB<span class="sc-lime">PRO</span></span></a><button class="sc-menu-btn" id="scMenuBtn" aria-label="Ouvrir le menu" aria-expanded="false"><i class="fas fa-bars"></i></button><div class="sc-nav-links" id="scNavLinks"><a class="" href="/"><i class="fas fa-chart-line"></i> Vue d'ensemble</a><a class="sc-active" href="/members"><i class="fas fa-users"></i> Membres</a><a class="" href="/activities"><i class="fas fa-dumbbell"></i> Activités</a><a href="/about"><i class="fas fa-layer-group"></i> Plateforme</a></div><span class="sc-live"><i></i> SportClub Pro</span></nav>
 
     <main class="container mx-auto px-4 py-8">
         <!-- Header -->
@@ -1186,5 +1177,8 @@
         `;
         document.head.appendChild(style);
     </script>
+<script>
+(function(){const b=document.getElementById('scMenuBtn'),n=document.getElementById('scNavLinks');if(b&&n){b.addEventListener('click',()=>{const o=n.classList.toggle('sc-open');b.setAttribute('aria-expanded',String(o));b.innerHTML=o?'<i class="fas fa-times"></i>':'<i class="fas fa-bars"></i>';});document.addEventListener('click',e=>{if(!n.contains(e.target)&&!b.contains(e.target)){n.classList.remove('sc-open');b.setAttribute('aria-expanded','false');b.innerHTML='<i class="fas fa-bars"></i>';}});}})();
+</script>
 </body>
 </html>
