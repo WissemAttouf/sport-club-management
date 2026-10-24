@@ -1,7 +1,7 @@
 services:
   mysql:
     image: mysql:8.0
-    container_name: sport-club-mysql
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in your local .env file}
       MYSQL_DATABASE: sportdb
@@ -13,10 +13,18 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - sport-network
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
 
   app:
-    build: .
-    container_name: sport-club-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
       - "127.0.0.1:8080:8080"
     environment:
@@ -25,7 +33,8 @@ services:
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-sport_app}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in your local .env file}
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - sport-network
 
