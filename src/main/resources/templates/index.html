@@ -56,9 +56,7 @@
         a { color: inherit; }
         img { max-width: 100%; display: block; }
 
-        .app {
-            min-height: 100vh;
-        }
+        .app { min-height: 100vh; }
 
         .topbar {
             position: sticky;
@@ -215,9 +213,7 @@
             color: var(--text-strong);
         }
 
-        .page-head h1 span {
-            color: #e9eefc;
-        }
+        .page-head h1 span { color: #e9eefc; }
 
         .page-head p {
             margin: 12px 0 0;
@@ -295,6 +291,9 @@
             padding: 26px 26px 24px;
             position: relative;
             overflow: hidden;
+            background:
+                radial-gradient(500px 220px at 100% -10%, rgba(125, 34, 59, 0.26), transparent 45%),
+                linear-gradient(180deg, rgba(16, 27, 49, 0.96), rgba(9, 17, 31, 0.96));
         }
 
         .hero-copy::before {
@@ -331,9 +330,7 @@
             color: var(--text-strong);
         }
 
-        .hero-copy h2 span {
-            color: #e7eef8;
-        }
+        .hero-copy h2 span { color: #e7eef8; }
 
         .hero-copy p {
             margin: 16px 0 0;
@@ -354,6 +351,15 @@
             position: relative;
             overflow: hidden;
             min-height: 320px;
+            border: 1px solid rgba(148,163,184,0.18);
+        }
+
+        .hero-visual::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(5,16,44,0.18), rgba(5,16,44,0.58));
+            z-index: 1;
         }
 
         .hero-visual img {
@@ -367,6 +373,7 @@
             position: absolute;
             right: 22px;
             bottom: 20px;
+            z-index: 2;
             display: grid;
             gap: 4px;
             padding: 18px 18px 14px;
@@ -390,6 +397,52 @@
             text-transform: uppercase;
             letter-spacing: 0.12em;
             font-size: 0.62rem;
+        }
+
+        .hero-panel {
+            position: absolute;
+            left: 22px;
+            bottom: 20px;
+            z-index: 2;
+            display: grid;
+            gap: 12px;
+            min-width: 205px;
+            padding: 16px 16px 14px;
+            border-radius: 18px;
+            background: rgba(9, 17, 31, 0.72);
+            border: 1px solid rgba(255,255,255,0.09);
+            backdrop-filter: blur(8px);
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #dcf4ff;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 800;
+        }
+
+        .hero-metric {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .hero-metric strong {
+            color: var(--text-strong);
+            font-size: 1.8rem;
+            font-family: 'Barlow Condensed', sans-serif;
+            letter-spacing: -0.06em;
+        }
+
+        .hero-metric span {
+            color: var(--green);
+            font-weight: 800;
+            font-size: 0.8rem;
         }
 
         .section-row {
@@ -430,6 +483,9 @@
             position: relative;
             overflow: hidden;
             padding: 22px 22px 18px;
+            background:
+                radial-gradient(220px 120px at 100% 0%, rgba(111,168,255,0.12), transparent 48%),
+                linear-gradient(180deg, rgba(16, 27, 49, 0.96), rgba(9, 17, 31, 0.96));
         }
 
         .stat-card::before {
@@ -803,7 +859,6 @@
             }
             .stats-grid,
             .quick-grid { grid-template-columns: 1fr; }
-            .count { font-size: 0.7rem; }
         }
     </style>
 </head>
@@ -852,6 +907,10 @@
             </div>
             <div class="hero-visual" aria-label="Athlète en entraînement">
                 <img src="https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=1200&q=85" alt="Athlète nageant dans une piscine" fetchpriority="high">
+                <div class="hero-panel">
+                    <span class="hero-pill"><i class="fa-solid fa-chart-line"></i> Performance</span>
+                    <div class="hero-metric"><strong>94%</strong><span>+12.4%</span></div>
+                </div>
                 <div class="hero-stamp"><strong>MOVE<br>FORWARD.</strong><small>Chaque jour compte</small></div>
             </div>
         </section>
