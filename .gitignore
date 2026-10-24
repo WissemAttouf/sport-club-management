@@ -42,3 +42,6 @@ application-*.local.properties
 *.key
 *.p12
 *.pfx
+
+# Kubernetes credentials (never commit real secrets)
+k8s/secret.yaml
