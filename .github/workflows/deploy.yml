@@ -1,24 +1,55 @@
-﻿name: Deploy to Kubernetes
+
+name: Kubernetes manifest validation
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [main, develop, "devops/**"]
+    paths:
+      - "k8s/**"
+      - ".github/workflows/deploy.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "k8s/**"
+      - ".github/workflows/deploy.yml"
+
+permissions:
+  contents: read
 
 jobs:
-  deploy:
+  validate:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Set up Kubeconfig
-      uses: azure/k8s-set-context@v1
-      with:
-        kubeconfig: ${{ secrets.KUBE_CONFIG }}
-        
-    - name: Deploy to Kubernetes
-      run: |
-        kubectl apply -f k8s/
-        kubectl rollout status deployment/sport-club-management
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check pyyaml
+
+      - name: Validate Kubernetes YAML syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+
+          files = sorted(Path("k8s").glob("*.yaml"))
+          if not files:
+              raise SystemExit("No Kubernetes YAML files found in k8s/")
+
+          for path in files:
+              docs = [
+                  doc
+                  for doc in yaml.safe_load_all(
+                      path.read_text(encoding="utf-8-sig")
+                  )
+                  if doc
+              ]
+              if not docs:
+                  raise SystemExit(f"No Kubernetes resources found in {path}")
+              print(f"OK: {path} ({len(docs)} resource(s))")
+          PY

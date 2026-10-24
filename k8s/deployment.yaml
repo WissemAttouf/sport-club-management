@@ -1,66 +1,76 @@
-﻿apiVersion: apps/v1
+
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sport-club-management
   labels:
     app: sport-club
-    version: v1.0.0
 spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: sport-club
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: sport-club
   template:
     metadata:
       labels:
         app: sport-club
-        version: v1.0.0
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "8080"
-        prometheus.io/path: "/actuator/prometheus"
     spec:
       containers:
-      - name: sport-club-app
-        image: sport-club-management:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
-          name: http
-        env:
-        - name: SPRING_PROFILES_ACTIVE
-          value: "kubernetes"
-        - name: DB_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: sport-club-config
-              key: database.host
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: sport-club-secrets
-              key: db-password
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "250m"
-          limits:
-            memory: "1Gi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /actuator/health/liveness
-            port: 8080
-          initialDelaySeconds: 60
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /actuator/health/readiness
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 5
+        - name: sport-club-app
+          image: sport-club-management:dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+
+          # Configuration Spring depuis le ConfigMap
+          envFrom:
+            - configMapRef:
+                name: sport-club-config
+
+          # Identifiants MySQL depuis le Secret
+          env:
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: sport-club-secrets
+                  key: db-username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sport-club-secrets
+                  key: db-password
+
+          resources:
+            requests:
+              memory: 384Mi
+              cpu: 200m
+            limits:
+              memory: 768Mi
+              cpu: 750m
+
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 10
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            periodSeconds: 5
+            failureThreshold: 3

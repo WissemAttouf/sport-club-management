@@ -1,7 +1,13 @@
 target/
-.git
+.git/
+.github/
 .gitignore
 *.iml
-.idea
+.idea/
+.vscode/
 logs/
 .DS_Store
+.env
+.env.*
+!.env.example
+k8s/secret.yaml
