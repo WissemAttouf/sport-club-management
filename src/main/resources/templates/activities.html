@@ -4,438 +4,1239 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activités Sportives | SportClub Pro</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    
+
     <style>
-        .activity-card {
-            transition: all 0.3s ease;
+        :root {
+            color-scheme: dark;
+            --sc-bg: #05102C;
+            --sc-bg-2: #0c1633;
+            --sc-panel: rgba(15, 23, 42, 0.82);
+            --sc-panel-strong: #101d38;
+            --sc-card: #101b31;
+            --sc-card-alt: #152642;
+            --sc-card-soft: #1b2d4d;
+            --sc-line: rgba(148, 163, 184, 0.16);
+            --sc-text: #edf4ff;
+            --sc-text-strong: #f8fbff;
+            --sc-muted: #9fb0ca;
+            --sc-burgundy: #7d223b;
+            --sc-burgundy-2: #a83350;
+            --sc-blue: #6fa8ff;
+            --sc-blue-soft: rgba(111, 168, 255, 0.18);
+            --sc-success: #4ac5a5;
+            --sc-warning: #f4b860;
+            --sc-danger: #ff6a6a;
+            --sc-shadow: 0 24px 65px rgba(2, 6, 23, 0.42);
         }
-        
-        .activity-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(1200px 380px at 90% -10%, rgba(125, 34, 59, 0.28), transparent 50%),
+                radial-gradient(800px 420px at 15% 0%, rgba(111, 168, 255, 0.12), transparent 45%),
+                var(--sc-bg);
+            color: var(--sc-text);
+            font-family: 'DM Sans', sans-serif;
         }
-        
-        .capacity-bar {
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
+
+        body > nav:not(.sc-topbar) { display: none !important; }
+
+        main.container,
+        main {
+            max-width: 1440px !important;
+            margin: 0 auto !important;
+            padding: clamp(18px, 3vw, 52px) clamp(18px, 2.8vw, 36px) 64px !important;
         }
-        
-        .capacity-fill {
-            height: 100%;
-            transition: width 0.5s ease;
+
+        h1, h2, h3, h4 {
+            color: var(--sc-text-strong) !important;
+            letter-spacing: -0.02em;
+            margin: 0;
         }
-        
-        .calendar-day {
+
+        p, span, button, input, textarea, select {
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .bg-white,
+        .bg-gray-50,
+        .bg-gray-100,
+        .bg-gray-200,
+        .bg-blue-50,
+        .bg-green-50,
+        .bg-red-50,
+        .bg-yellow-50,
+        .bg-purple-50 {
+            background: linear-gradient(180deg, rgba(14, 23, 42, 0.95), rgba(14, 23, 42, 0.9)) !important;
+            color: var(--sc-text) !important;
+            border-color: var(--sc-line) !important;
+        }
+
+        .text-gray-800,
+        .text-gray-700,
+        .text-gray-600,
+        .text-gray-500,
+        .text-gray-400,
+        .text-blue-700,
+        .text-blue-800,
+        .text-green-600,
+        .text-purple-600,
+        .text-red-600,
+        .text-yellow-600 {
+            color: var(--sc-text) !important;
+        }
+
+        input, select, textarea {
+            background: rgba(11, 20, 37, 0.8) !important;
+            color: var(--sc-text) !important;
+            border: 1px solid var(--sc-line) !important;
+            border-radius: 14px !important;
+            box-shadow: none !important;
+        }
+
+        .sc-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            min-height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 22px;
+            padding: 14px clamp(18px, 4vw, 56px);
+            border-bottom: 1px solid var(--sc-line);
+            background: rgba(5, 16, 44, 0.78);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 10px 40px rgba(2, 6, 23, 0.16);
+        }
+
+        .sc-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--sc-text-strong);
+            font-size: 1.05rem;
+            letter-spacing: 0.12em;
+            font-weight: 800;
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+
+        .sc-brand-mark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--sc-burgundy), var(--sc-burgundy-2));
+            color: white;
+            box-shadow: 0 12px 22px rgba(125, 34, 59, 0.35);
+        }
+
+        .sc-brand span:last-child {
+            font-size: 1.25rem;
+            letter-spacing: 0.14em;
+        }
+
+        .sc-brand span:last-child span {
+            color: var(--sc-burgundy-2);
+            letter-spacing: 0.08em;
+        }
+
+        .sc-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .sc-nav-links a {
+            padding: 10px 14px;
+            border-radius: 12px;
+            color: var(--sc-muted);
+            text-decoration: none;
+            font-weight: 600;
             transition: all 0.2s ease;
         }
-        
-        .calendar-day:hover {
-            background-color: #f3f4f6;
+
+        .sc-nav-links a:hover,
+        .sc-nav-links a.active {
+            color: var(--sc-text-strong);
+            background: rgba(111, 168, 255, 0.12);
+            border: 1px solid rgba(111, 168, 255, 0.2);
         }
-        
+
+        .sc-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(74, 197, 165, 0.5);
+            background: rgba(74, 197, 165, 0.1);
+            color: #d4fff3;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .sc-live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--sc-success);
+            box-shadow: 0 0 0 6px rgba(74, 197, 165, 0.16);
+        }
+
+        .sc-page-header {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 28px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--sc-line);
+        }
+
+        .sc-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--sc-blue);
+            font-weight: 700;
+        }
+
+        .sc-page-header h1 {
+            font-size: clamp(2.2rem, 4vw, 3.4rem);
+            line-height: 1.05;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+        }
+
+        .sc-page-header p {
+            margin: 10px 0 0;
+            max-width: 760px;
+            color: var(--sc-muted);
+            font-size: 1.04rem;
+        }
+
+        .sc-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .sc-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--sc-line);
+            background: rgba(15, 23, 42, 0.7);
+            color: var(--sc-text);
+            font-weight: 700;
+        }
+
+        .sc-btn,
+        .sc-btn-primary,
+        .sc-btn-secondary,
+        .sc-btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 18px;
+            border-radius: 14px;
+            border: 1px solid transparent;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .sc-btn-primary,
+        .bg-blue-600,
+        .bg-blue-500 {
+            background: linear-gradient(135deg, var(--sc-burgundy), var(--sc-burgundy-2)) !important;
+            color: #fff !important;
+            box-shadow: 0 18px 30px rgba(125, 34, 59, 0.25);
+        }
+
+        .sc-btn-secondary {
+            background: rgba(111, 168, 255, 0.1);
+            border-color: rgba(111, 168, 255, 0.2);
+            color: var(--sc-text);
+        }
+
+        .sc-btn-ghost {
+            background: rgba(148, 163, 184, 0.08);
+            border-color: var(--sc-line);
+            color: var(--sc-text);
+        }
+
+        .sc-btn:hover,
+        .sc-btn-primary:hover,
+        .sc-btn-secondary:hover,
+        .sc-btn-ghost:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.04);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 26px;
+        }
+
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(16, 27, 49, 0.97), rgba(10, 18, 33, 0.96));
+            border: 1px solid var(--sc-line);
+            border-radius: 22px;
+            box-shadow: var(--sc-shadow);
+            padding: 22px 22px 18px;
+        }
+
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--sc-burgundy), var(--sc-blue));
+        }
+
+        .stat-card.accent-blue::before { background: linear-gradient(90deg, var(--sc-blue), #9cc7ff); }
+        .stat-card.accent-green::before { background: linear-gradient(90deg, #41c3a3, #9fe7d3); }
+        .stat-card.accent-gold::before { background: linear-gradient(90deg, #c98b37, #f4b860); }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .stat-label {
+            color: var(--sc-muted);
+            font-size: 0.82rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .stat-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: rgba(111, 168, 255, 0.12);
+            color: var(--sc-blue);
+            border: 1px solid rgba(111, 168, 255, 0.2);
+            font-size: 1.1rem;
+        }
+
+        .stat-card.accent-green .stat-icon { background: rgba(74, 197, 165, 0.12); color: #74d5bc; border-color: rgba(74, 197, 165, 0.2); }
+        .stat-card.accent-gold .stat-icon { background: rgba(244, 184, 96, 0.12); color: var(--sc-warning); border-color: rgba(244, 184, 96, 0.2); }
+        .stat-card.accent-burgundy .stat-icon { background: rgba(125, 34, 59, 0.12); color: #f1a7b8; border-color: rgba(125, 34, 59, 0.2); }
+
+        .stat-number {
+            margin-top: 18px;
+            font-size: clamp(1.9rem, 2.5vw, 2.8rem);
+            font-weight: 800;
+            letter-spacing: -0.06em;
+            color: var(--sc-text-strong);
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+
+        .stat-foot {
+            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--sc-muted);
+            font-size: 0.92rem;
+        }
+
+        .mini-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--sc-success);
+            box-shadow: 0 0 0 5px rgba(74, 197, 165, 0.14);
+        }
+
+        .panel,
+        .activity-card,
+        .filter-panel,
+        .calendar-panel {
+            background: linear-gradient(180deg, rgba(16, 27, 49, 0.96), rgba(9, 17, 31, 0.96));
+            border: 1px solid var(--sc-line);
+            border-radius: 22px;
+            box-shadow: var(--sc-shadow);
+        }
+
+        .filter-panel {
+            padding: 22px 22px 18px;
+            margin-bottom: 26px;
+        }
+
+        .panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .panel-head h2,
+        .panel-head h3 {
+            font-size: 1.35rem;
+            font-weight: 800;
+        }
+
+        .panel-head p,
+        .section-subtitle {
+            color: var(--sc-muted);
+            margin-top: 4px;
+            margin-bottom: 0;
+        }
+
+        .filter-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-actions button {
+            border: 1px solid var(--sc-line);
+            background: rgba(148, 163, 184, 0.08);
+            color: var(--sc-text);
+            border-radius: 12px;
+            padding: 9px 12px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .filter-actions button.active {
+            background: rgba(125, 34, 59, 0.14);
+            border-color: rgba(125, 34, 59, 0.3);
+            color: #f9ced7;
+        }
+
+        .search-wrap {
+            position: relative;
+            margin-top: 14px;
+        }
+
+        .search-wrap input {
+            width: 100%;
+            padding: 14px 18px 14px 44px;
+            border-radius: 14px;
+            border: 1px solid var(--sc-line);
+            background: rgba(11, 20, 37, 0.7);
+            color: var(--sc-text);
+        }
+
+        .search-wrap i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--sc-muted);
+        }
+
+        .calendar-panel {
+            padding: 22px;
+            margin-bottom: 26px;
+        }
+
+        .calendar-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .calendar-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .calendar-nav button {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: rgba(148, 163, 184, 0.08);
+            border: 1px solid var(--sc-line);
+            color: var(--sc-text);
+        }
+
+        #currentWeek {
+            min-width: 150px;
+            text-align: center;
+            color: var(--sc-text-strong);
+            font-weight: 700;
+        }
+
+        #calendar {
+            display: grid;
+            grid-template-columns: 78px repeat(7, minmax(110px, 1fr));
+            gap: 8px;
+            width: 100%;
+        }
+
+        #calendar > div {
+            min-height: 58px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+        }
+
+        .calendar-day {
+            background: rgba(148, 163, 184, 0.04);
+            border-color: rgba(148, 163, 184, 0.08) !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .calendar-day:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(2, 6, 23, 0.22);
+        }
+
         .calendar-day.active {
-            background-color: #3b82f6;
+            background: rgba(125, 34, 59, 0.2);
+            border-color: rgba(125, 34, 59, 0.3) !important;
+        }
+
+        .activity-slot {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 8px 10px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
             color: white;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+        }
+
+        #activitiesContainer {
+            margin-top: 10px;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .activity-card {
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(111, 168, 255, 0.3);
+            box-shadow: 0 26px 62px rgba(2, 6, 23, 0.4);
+        }
+
+        .activity-card img {
+            width: 100%;
+            height: 206px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .activity-badge {
+            position: absolute;
+            right: 14px;
+            top: 14px;
+            border-radius: 999px;
+            padding: 7px 10px;
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            color: white;
+            background: linear-gradient(180deg, rgba(74, 197, 165, 0.95), rgba(52, 168, 136, 0.92));
+            box-shadow: 0 16px 24px rgba(52, 168, 136, 0.25);
+        }
+
+        .activity-badge.warn {
+            background: linear-gradient(180deg, rgba(244, 184, 96, 1), rgba(201, 139, 55, 0.95));
+            box-shadow: 0 16px 24px rgba(201, 139, 55, 0.24);
+        }
+
+        .activity-badge.alert {
+            background: linear-gradient(180deg, rgba(125, 34, 59, 0.98), rgba(168, 51, 80, 1));
+            box-shadow: 0 16px 24px rgba(125, 34, 59, 0.22);
+        }
+
+        .activity-content {
+            padding: 22px 20px 18px;
+        }
+
+        .activity-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .activity-title {
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+
+        .activity-subtitle {
+            margin-top: 4px;
+            color: var(--sc-muted);
+            font-size: 0.98rem;
+        }
+
+        .activity-price {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: rgba(111, 168, 255, 0.12);
+            border: 1px solid rgba(111, 168, 255, 0.18);
+            color: #dfeeff;
+            font-size: 0.8rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .activity-meta {
+            display: grid;
+            gap: 12px;
+        }
+
+        .capacity-row {
+            display: grid;
+            gap: 6px;
+        }
+
+        .capacity-row .meta-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            color: var(--sc-muted);
+            font-size: 0.84rem;
+        }
+
+        .capacity-bar {
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: rgba(148, 163, 184, 0.13);
+            border: 1px solid rgba(148, 163, 184, 0.08);
+        }
+
+        .capacity-fill {
+            height: 100%;
+            border-radius: inherit;
+            transition: width 0.45s ease, background 0.3s ease;
+            background: linear-gradient(90deg, var(--sc-success), #a7efda);
+        }
+
+        .activity-detail-block {
+            display: grid;
+            gap: 8px;
+            color: var(--sc-muted);
+            font-size: 0.9rem;
+        }
+
+        .activity-detail-block strong {
+            color: var(--sc-text);
+        }
+
+        .activity-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .activity-actions button {
+            width: 100%;
+            border-radius: 12px;
+            padding: 11px 12px;
+            border: 1px solid transparent;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .activity-actions .outline-btn {
+            background: rgba(148, 163, 184, 0.08);
+            border-color: var(--sc-line);
+            color: var(--sc-text);
+        }
+
+        .action-primary {
+            background: linear-gradient(135deg, var(--sc-burgundy), var(--sc-burgundy-2));
+            color: white;
+            box-shadow: 0 18px 26px rgba(125, 34, 59, 0.2);
+        }
+
+        .action-waitlist {
+            background: linear-gradient(135deg, #d4a558, #f4b860);
+            color: #261a09;
+        }
+
+        .activity-cta {
+            margin-top: 28px;
+            text-align: center;
+        }
+
+        .activity-cta .sc-btn-primary {
+            padding-inline: 26px;
+            min-height: 52px;
+            font-size: 1rem;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(2, 6, 23, 0.72);
+            z-index: 60;
+            padding: 20px;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        .modal-panel {
+            width: min(560px, 100%);
+            background: linear-gradient(180deg, rgba(15, 22, 39, 0.98), rgba(7, 14, 26, 0.98));
+            border: 1px solid var(--sc-line);
+            border-radius: 24px;
+            box-shadow: 0 36px 90px rgba(2, 6, 23, 0.5);
+            overflow: hidden;
+        }
+
+        .modal-panel.large {
+            width: min(760px, 100%);
+        }
+
+        .modal-body {
+            padding: 22px 22px 18px;
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 20px 22px 0;
+        }
+
+        .modal-head h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+
+        .close-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(148, 163, 184, 0.08);
+            border: 1px solid var(--sc-line);
+            color: var(--sc-text);
+        }
+
+        .slot-card {
+            border: 1px solid var(--sc-line);
+            border-radius: 14px;
+            padding: 14px 16px;
+            background: rgba(148, 163, 184, 0.04);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .slot-card:hover,
+        .slot-card.selected {
+            border-color: rgba(111, 168, 255, 0.42);
+            background: rgba(111, 168, 255, 0.08);
+            box-shadow: inset 0 0 0 1px rgba(111, 168, 255, 0.18);
+        }
+
+        .slot-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .slot-title {
+            font-weight: 700;
+            color: var(--sc-text-strong);
+        }
+
+        .slot-coach {
+            margin-top: 4px;
+            font-size: 0.84rem;
+            color: var(--sc-muted);
+        }
+
+        .slot-state {
+            color: #7ae3be;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .selected-info {
+            margin-top: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: rgba(111, 168, 255, 0.08);
+            border: 1px solid rgba(111, 168, 255, 0.2);
+            color: #dfeeff;
+        }
+
+        .selected-info h4 {
+            margin-bottom: 6px;
+            color: #eaf2ff;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-top: 14px;
+            margin-top: 14px;
+            border-top: 1px solid var(--sc-line);
+        }
+
+        .notification {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 100;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            box-shadow: var(--sc-shadow);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .notification.success { background: linear-gradient(135deg, #22a06b, #47c397); }
+        .notification.info { background: linear-gradient(135deg, var(--sc-burgundy), var(--sc-burgundy-2)); }
+        .notification.warning { background: linear-gradient(135deg, #d89b35, #f4b860); color: #201507; }
+        .notification.error { background: linear-gradient(135deg, #c63b4c, #ff7e82); }
+
+        @media (max-width: 1200px) {
+            .activity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 900px) {
+            .sc-topbar { gap: 12px; }
+            .sc-nav-links { gap: 4px; }
+            .sc-nav-links a { font-size: 0.82rem; padding: 8px 10px; }
+            .sc-live { display: none; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .activity-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 700px) {
+            .sc-topbar {
+                min-height: 68px;
+                padding: 12px 16px;
+                flex-wrap: wrap;
+            }
+            .sc-menu-btn { display: block; margin-left: auto; }
+            .sc-nav-links {
+                display: none;
+                order: 4;
+                flex-basis: 100%;
+                align-items: stretch;
+                flex-direction: column;
+                width: 100%;
+                padding-top: 8px;
+            }
+            .sc-nav-links.open { display: flex; }
+            .sc-page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .stats-grid,
+            .activity-grid { grid-template-columns: 1fr; }
+            #calendar {
+                grid-template-columns: 70px repeat(7, minmax(95px, 1fr));
+                overflow-x: auto;
+            }
+            .panel-head,
+            .calendar-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+            .activity-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <nav class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
-        <div class="container mx-auto px-6 py-3">
-            <div class="flex items-center justify-between">
-                <a href="/" class="flex items-center space-x-3">
-                    <i class="fas fa-running text-2xl"></i>
-                    <span class="text-xl font-bold">SportClub<span class="text-yellow-300">Pro</span></span>
-                </a>
-                <div class="flex items-center space-x-6">
-                    <a href="/" class="hover:text-yellow-300">
-                        <i class="fas fa-home mr-1"></i> Dashboard
-                    </a>
-                    <a href="/members" class="hover:text-yellow-300">
-                        <i class="fas fa-users mr-1"></i> Membres
-                    </a>
-                    <a href="/activities" class="font-bold">
-                        <i class="fas fa-futbol mr-1"></i> Activités
-                    </a>
-                </div>
-            </div>
+    <nav class="sc-topbar">
+        <a href="/" class="sc-brand">
+            <span class="sc-brand-mark"><i class="fas fa-bolt"></i></span>
+            <span>SPORTCLUB<span>PRO</span></span>
+        </a>
+        <div class="sc-nav-links" id="scNavLinks">
+            <a href="/" class="active"><i class="fa-solid fa-chart-line"></i> Vue d'ensemble</a>
+            <a href="/members"><i class="fa-solid fa-users"></i> Membres</a>
+            <a href="/activities"><i class="fa-solid fa-dumbbell"></i> Activités</a>
+            <a href="/about"><i class="fa-solid fa-layer-group"></i> Plateforme</a>
+            <a href="/contact"><i class="fa-regular fa-envelope"></i> Contact</a>
+        </div>
+        <div class="sc-header-actions">
+            <span class="sc-live"><span class="sc-live-dot"></span> API connectée</span>
+            <button class="sc-btn sc-btn-ghost sc-menu-btn" id="scMenuBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
         </div>
     </nav>
 
     <main class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Activités Sportives</h1>
-            <p class="text-gray-600">Réservez vos sessions et gérez les activités du club</p>
-        </div>
-        
-        <!-- Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-xl p-6 shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500">Activités Actives</p>
-                        <h3 id="activeActivities" class="text-2xl font-bold">5</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-futbol text-blue-600 text-xl"></i>
-                    </div>
-                </div>
+        <div class="sc-page-header">
+            <div>
+                <div class="sc-eyebrow"><i class="fa-solid fa-calendar-check"></i> Centre d'entraînement</div>
+                <h1>Activités Sportives</h1>
+                <p>Réservez vos sessions, pilotez le planning et optimisez l'expérience des adhérents avec une vue claire et premium.</p>
             </div>
-            
-            <div class="bg-white rounded-xl p-6 shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500">Sessions Cette Semaine</p>
-                        <h3 id="weeklySessions" class="text-2xl font-bold">12</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-calendar-alt text-green-600 text-xl"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white rounded-xl p-6 shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500">Taux de Remplissage</p>
-                        <h3 id="occupancyRate" class="text-2xl font-bold">78%</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-chart-line text-purple-600 text-xl"></i>
-                    </div>
-                </div>
+            <div class="sc-header-actions">
+                <span class="sc-chip"><i class="fa-regular fa-clock"></i> 18 sessions cette semaine</span>
+                <button class="sc-btn-primary" onclick="showAddActivityModal()"><i class="fas fa-plus"></i> Nouvelle activité</button>
             </div>
         </div>
-        
-        <!-- Filtres -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
-                <h2 class="text-xl font-bold text-gray-800">Filtrer les activités</h2>
-                <div class="flex space-x-3 mt-4 md:mt-0">
-                    <button onclick="showAllActivities()" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200">
-                        Toutes
-                    </button>
-                    <button onclick="filterActivities('sport')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
-                        Sports
-                    </button>
-                    <button onclick="filterActivities('fitness')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
-                        Fitness
-                    </button>
-                    <button onclick="filterActivities('aquatique')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
-                        Aquatique
-                    </button>
+
+        <div class="stats-grid">
+            <div class="stat-card accent-blue">
+                <div class="stat-top">
+                    <div class="stat-label">Activités actives</div>
+                    <div class="stat-icon"><i class="fas fa-futbol"></i></div>
                 </div>
+                <div id="activeActivities" class="stat-number">5</div>
+                <div class="stat-foot"><span class="mini-dot"></span> Programmes en cours</div>
             </div>
-            
-            <div class="relative">
-                <input type="text" id="activitySearch" 
-                       class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                       placeholder="Rechercher une activité..."
-                       onkeyup="searchActivities()">
-                <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
+
+            <div class="stat-card accent-green">
+                <div class="stat-top">
+                    <div class="stat-label">Sessions cette semaine</div>
+                    <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                </div>
+                <div id="weeklySessions" class="stat-number">12</div>
+                <div class="stat-foot"><span class="mini-dot"></span> Niveaux multi-activités</div>
+            </div>
+
+            <div class="stat-card accent-gold">
+                <div class="stat-top">
+                    <div class="stat-label">Taux de remplissage</div>
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                </div>
+                <div id="occupancyRate" class="stat-number">78%</div>
+                <div class="stat-foot"><span class="mini-dot"></span> Capacité moyenne</div>
             </div>
         </div>
-        
-        <!-- Calendrier -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-bold text-gray-800">Calendrier des Sessions</h2>
-                <div class="flex space-x-2">
-                    <button onclick="previousWeek()" class="p-2 hover:bg-gray-100 rounded-lg">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <span id="currentWeek" class="font-medium px-4">Semaine en cours</span>
-                    <button onclick="nextWeek()" class="p-2 hover:bg-gray-100 rounded-lg">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+
+        <div class="filter-panel">
+            <div class="panel-head">
+                <div>
+                    <h2>Filtrer les activités</h2>
+                    <p>Affinez la recherche selon les disciplines et les besoins de votre club.</p>
+                </div>
+                <div class="filter-actions">
+                    <button onclick="showAllActivities()" class="active">Toutes</button>
+                    <button onclick="filterActivities('sport')">Sports</button>
+                    <button onclick="filterActivities('fitness')">Fitness</button>
+                    <button onclick="filterActivities('aquatique')">Aquatique</button>
                 </div>
             </div>
-            
+
+            <div class="search-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="activitySearch" placeholder="Rechercher une activité, un coach ou une discipline..." onkeyup="searchActivities()">
+            </div>
+        </div>
+
+        <div class="calendar-panel">
+            <div class="calendar-toolbar">
+                <h2>Calendrier des sessions</h2>
+                <div class="calendar-nav">
+                    <button onclick="previousWeek()"><i class="fas fa-chevron-left"></i></button>
+                    <span id="currentWeek">Semaine en cours</span>
+                    <button onclick="nextWeek()"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
             <div class="overflow-x-auto">
-                <div id="calendar" class="grid grid-cols-8 gap-2 min-w-max">
+                <div id="calendar" class="grid min-w-max">
                     <!-- Généré dynamiquement -->
                 </div>
             </div>
         </div>
-        
-        <!-- Liste des activités -->
+
         <div id="activitiesContainer">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Activité 1: Football -->
-                <div class="activity-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="activity-grid">
+                <div class="activity-card">
                     <div class="relative">
-                        <img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                             alt="Football" class="w-full h-48 object-cover">
-                        <div class="absolute top-4 right-4">
-                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                Populaire
-                            </span>
-                        </div>
+                        <img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Football">
+                        <span class="activity-badge">Populaire</span>
                     </div>
-                    
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-4">
+                    <div class="activity-content">
+                        <div class="activity-top">
                             <div>
-                                <h3 class="text-xl font-bold text-gray-800">⚽ Football</h3>
-                                <p class="text-gray-600">Entraînements et matchs amicaux</p>
+                                <h3 class="activity-title">⚽ Football</h3>
+                                <div class="activity-subtitle">Entraînements & matchs amicaux</div>
                             </div>
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                                25€/mois
-                            </span>
+                            <span class="activity-price">25€/mois</span>
                         </div>
-                        
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between text-sm text-gray-600 mb-1">
+
+                        <div class="activity-meta">
+                            <div class="capacity-row">
+                                <div class="meta-line">
                                     <span>Places disponibles</span>
-                                    <span id="footballCapacity">15/20</span>
+                                    <strong id="footballCapacity">15/20</strong>
                                 </div>
-                                <div class="capacity-bar bg-gray-200">
-                                    <div id="footballBar" class="capacity-fill bg-green-500" style="width: 75%"></div>
-                                </div>
+                                <div class="capacity-bar"><div id="footballBar" class="capacity-fill" style="width: 75%"></div></div>
                             </div>
-                            
-                            <div>
-                                <p class="text-sm text-gray-600 mb-2"><i class="fas fa-user-tie mr-2"></i><strong>Coach:</strong> Jean Dupont</p>
-                                <p class="text-sm text-gray-600"><i class="fas fa-clock mr-2"></i><strong>Prochaine session:</strong> Demain 18h-20h</p>
+
+                            <div class="activity-detail-block">
+                                <div><strong>Coach :</strong> Jean Dupont</div>
+                                <div><strong>Prochaine session :</strong> Demain 18h-20h</div>
                             </div>
-                            
-                            <div class="flex space-x-2">
-                                <button onclick="showActivityDetails('football')" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
-                                    <i class="fas fa-info-circle mr-2"></i>Détails
-                                </button>
-                                <button onclick="bookActivity('football')" id="bookFootballBtn" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                    <i class="fas fa-calendar-plus mr-2"></i>Réserver
-                                </button>
-                            </div>
+                        </div>
+
+                        <div class="activity-actions">
+                            <button class="outline-btn" onclick="showActivityDetails('football')"><i class="fas fa-info-circle"></i> Détails</button>
+                            <button class="action-primary" id="bookFootballBtn" onclick="bookActivity('football')"><i class="fas fa-calendar-plus"></i> Réserver</button>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Activité 2: Basketball -->
-                <div class="activity-card bg-white rounded-xl shadow-lg overflow-hidden">
+
+                <div class="activity-card">
                     <div class="relative">
-                        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                             alt="Basketball" class="w-full h-48 object-cover">
+                        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Basketball">
                     </div>
-                    
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-4">
+                    <div class="activity-content">
+                        <div class="activity-top">
                             <div>
-                                <h3 class="text-xl font-bold text-gray-800">🏀 Basketball</h3>
-                                <p class="text-gray-600">Section compétition et loisir</p>
+                                <h3 class="activity-title">🏀 Basketball</h3>
+                                <div class="activity-subtitle">Section compétition & loisir</div>
                             </div>
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                                20€/mois
-                            </span>
+                            <span class="activity-price">20€/mois</span>
                         </div>
-                        
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between text-sm text-gray-600 mb-1">
+
+                        <div class="activity-meta">
+                            <div class="capacity-row">
+                                <div class="meta-line">
                                     <span>Places disponibles</span>
-                                    <span id="basketballCapacity">12/15</span>
+                                    <strong id="basketballCapacity">12/15</strong>
                                 </div>
-                                <div class="capacity-bar bg-gray-200">
-                                    <div id="basketballBar" class="capacity-fill bg-green-500" style="width: 80%"></div>
-                                </div>
+                                <div class="capacity-bar"><div id="basketballBar" class="capacity-fill" style="width: 80%"></div></div>
                             </div>
-                            
-                            <div>
-                                <p class="text-sm text-gray-600 mb-2"><i class="fas fa-user-tie mr-2"></i><strong>Coach:</strong> Marie Curie</p>
-                                <p class="text-sm text-gray-600"><i class="fas fa-clock mr-2"></i><strong>Prochaine session:</strong> Mercredi 19h-21h</p>
+
+                            <div class="activity-detail-block">
+                                <div><strong>Coach :</strong> Marie Curie</div>
+                                <div><strong>Prochaine session :</strong> Mercredi 19h-21h</div>
                             </div>
-                            
-                            <div class="flex space-x-2">
-                                <button onclick="showActivityDetails('basketball')" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
-                                    <i class="fas fa-info-circle mr-2"></i>Détails
-                                </button>
-                                <button onclick="bookActivity('basketball')" id="bookBasketballBtn" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                    <i class="fas fa-calendar-plus mr-2"></i>Réserver
-                                </button>
-                            </div>
+                        </div>
+
+                        <div class="activity-actions">
+                            <button class="outline-btn" onclick="showActivityDetails('basketball')"><i class="fas fa-info-circle"></i> Détails</button>
+                            <button class="action-primary" id="bookBasketballBtn" onclick="bookActivity('basketball')"><i class="fas fa-calendar-plus"></i> Réserver</button>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Activité 3: Tennis -->
-                <div class="activity-card bg-white rounded-xl shadow-lg overflow-hidden">
+
+                <div class="activity-card">
                     <div class="relative">
-                        <img src="https://images.unsplash.com/photo-1595435934247-5d33b7f92c70?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                             alt="Tennis" class="w-full h-48 object-cover">
-                        <div class="absolute top-4 right-4">
-                            <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                Complet
-                            </span>
-                        </div>
+                        <img src="https://images.unsplash.com/photo-1595435934247-5d33b7f92c70?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Tennis">
+                        <span class="activity-badge warn">Complet</span>
                     </div>
-                    
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-4">
+                    <div class="activity-content">
+                        <div class="activity-top">
                             <div>
-                                <h3 class="text-xl font-bold text-gray-800">🎾 Tennis</h3>
-                                <p class="text-gray-600">Cours adultes et enfants</p>
+                                <h3 class="activity-title">🎾 Tennis</h3>
+                                <div class="activity-subtitle">Cours adultes & enfants</div>
                             </div>
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                                35€/mois
-                            </span>
+                            <span class="activity-price">35€/mois</span>
                         </div>
-                        
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between text-sm text-gray-600 mb-1">
+
+                        <div class="activity-meta">
+                            <div class="capacity-row">
+                                <div class="meta-line">
                                     <span>Places disponibles</span>
-                                    <span id="tennisCapacity">0/10</span>
+                                    <strong id="tennisCapacity">0/10</strong>
                                 </div>
-                                <div class="capacity-bar bg-gray-200">
-                                    <div id="tennisBar" class="capacity-fill bg-red-500" style="width: 100%"></div>
-                                </div>
+                                <div class="capacity-bar"><div id="tennisBar" class="capacity-fill" style="width: 100%"></div></div>
                             </div>
-                            
-                            <div>
-                                <p class="text-sm text-gray-600 mb-2"><i class="fas fa-user-tie mr-2"></i><strong>Coach:</strong> Pierre Martin</p>
-                                <p class="text-sm text-gray-600"><i class="fas fa-clock mr-2"></i><strong>Prochaine session:</strong> Samedi 10h-12h</p>
+
+                            <div class="activity-detail-block">
+                                <div><strong>Coach :</strong> Pierre Martin</div>
+                                <div><strong>Prochaine session :</strong> Samedi 10h-12h</div>
                             </div>
-                            
-                            <div class="flex space-x-2">
-                                <button onclick="showActivityDetails('tennis')" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
-                                    <i class="fas fa-info-circle mr-2"></i>Détails
-                                </button>
-                                <button onclick="joinWaitlist('tennis')" class="flex-1 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
-                                    <i class="fas fa-clock mr-2"></i>Liste d'attente
-                                </button>
-                            </div>
+                        </div>
+
+                        <div class="activity-actions">
+                            <button class="outline-btn" onclick="showActivityDetails('tennis')"><i class="fas fa-info-circle"></i> Détails</button>
+                            <button class="action-waitlist" onclick="joinWaitlist('tennis')"><i class="fas fa-clock"></i> Liste d'attente</button>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Plus d'activités... -->
             </div>
         </div>
-        
-        <!-- Bouton Ajouter Activité -->
-        <div class="mt-8 text-center">
-            <button onclick="showAddActivityModal()" class="px-8 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg hover:opacity-90 font-medium">
-                <i class="fas fa-plus mr-2"></i> Proposer une nouvelle activité
-            </button>
+
+        <div class="activity-cta">
+            <button class="sc-btn-primary" onclick="showAddActivityModal()"><i class="fas fa-plus"></i> Proposer une nouvelle activité</button>
         </div>
     </main>
-    
-    <!-- Modal Réservation -->
-    <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 id="bookingTitle" class="text-xl font-bold text-gray-900">Réserver une session</h3>
-                    <button onclick="closeBookingModal()" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times text-2xl"></i>
-                    </button>
-                </div>
-                
-                <div id="bookingContent">
-                    <!-- Contenu dynamique -->
-                </div>
+
+    <div id="bookingModal" class="modal-backdrop">
+        <div class="modal-panel">
+            <div class="modal-head">
+                <h3 id="bookingTitle">Réserver une session</h3>
+                <button class="close-btn" onclick="closeBookingModal()"><i class="fas fa-times"></i></button>
             </div>
+            <div id="bookingContent" class="modal-body"></div>
         </div>
     </div>
-    
-    <!-- Modal Détails Activité -->
-    <div id="activityModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-8">
-                <div class="flex justify-between items-center mb-8">
-                    <h3 id="activityModalTitle" class="text-2xl font-bold text-gray-900"></h3>
-                    <button onclick="closeActivityModal()" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times text-2xl"></i>
-                    </button>
-                </div>
-                
-                <div id="activityModalContent">
-                    <!-- Contenu dynamique -->
-                </div>
+
+    <div id="activityModal" class="modal-backdrop">
+        <div class="modal-panel large">
+            <div class="modal-head">
+                <h3 id="activityModalTitle"></h3>
+                <button class="close-btn" onclick="closeActivityModal()"><i class="fas fa-times"></i></button>
             </div>
+            <div id="activityModalContent" class="modal-body"></div>
         </div>
     </div>
-    
+
     <script>
         let currentActivity = null;
         let currentWeek = 0;
-        
-        // Initialisation
+
         document.addEventListener('DOMContentLoaded', function() {
             generateCalendar();
             updateActivityStats();
-            
-            // Vérifier les réservations existantes
             checkExistingBookings();
+            const menuBtn = document.getElementById('scMenuBtn');
+            const nav = document.getElementById('scNavLinks');
+            if (menuBtn && nav) {
+                menuBtn.addEventListener('click', () => {
+                    const open = nav.classList.toggle('open');
+                    menuBtn.setAttribute('aria-expanded', String(open));
+                    menuBtn.innerHTML = open ? '<i class="fas fa-xmark"></i>' : '<i class="fas fa-bars"></i>';
+                });
+                document.addEventListener('click', (event) => {
+                    if (!nav.contains(event.target) && !menuBtn.contains(event.target)) {
+                        nav.classList.remove('open');
+                        menuBtn.setAttribute('aria-expanded', 'false');
+                        menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                    }
+                });
+            }
         });
-        
-        // Générer le calendrier
+
         function generateCalendar() {
             const container = document.getElementById('calendar');
             const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
             const today = new Date();
             const startOfWeek = new Date(today);
             startOfWeek.setDate(today.getDate() - today.getDay() + 1 + (currentWeek * 7));
-            
-            // En-têtes
+
             container.innerHTML = '<div class="font-bold text-gray-500 text-center py-2">Heure</div>';
             days.forEach(day => {
                 const date = new Date(startOfWeek);
                 date.setDate(startOfWeek.getDate() + days.indexOf(day));
                 container.innerHTML += `
-                    <div class="font-bold text-gray-700 text-center py-2">
+                    <div class="font-bold text-center py-2" style="color: var(--sc-muted);">
                         ${day}<br>
-                        <span class="text-sm font-normal">${date.getDate()}/${date.getMonth() + 1}</span>
+                        <span class="text-sm font-normal" style="color: var(--sc-text);">${date.getDate()}/${date.getMonth() + 1}</span>
                     </div>
                 `;
             });
-            
-            // Créneaux horaires
+
             const timeSlots = ['08:00', '10:00', '14:00', '16:00', '18:00', '20:00'];
             timeSlots.forEach(time => {
-                container.innerHTML += `<div class="text-gray-500 text-right pr-2 py-3 border-t">${time}</div>`;
-                
+                container.innerHTML += `<div class="text-right pr-2 py-3 border-t" style="color: var(--sc-muted); border-color: var(--sc-line);">${time}</div>`;
+
                 days.forEach((day, dayIndex) => {
                     const date = new Date(startOfWeek);
                     date.setDate(startOfWeek.getDate() + dayIndex);
                     const activities = getActivitiesForTimeSlot(date, time);
-                    
+
                     let cellContent = '';
                     if (activities.length > 0) {
                         const activity = activities[0];
                         cellContent = `
-                            <div class="activity-slot p-2 rounded ${getActivityColor(activity.type)} text-white text-xs cursor-pointer"
+                            <div class="activity-slot ${getActivityColor(activity.type)} text-white text-xs cursor-pointer"
                                  onclick="showTimeSlotDetails('${time}', ${dayIndex}, '${activity.name}')">
                                 <div class="font-bold">${activity.name}</div>
                                 <div>${activity.coach}</div>
                             </div>
                         `;
                     }
-                    
-                    container.innerHTML += `<div class="border-t p-1 min-h-[60px] calendar-day">${cellContent}</div>`;
+
+                    container.innerHTML += `<div class="calendar-day border-t p-1 min-h-[60px] ${activities.length ? 'active' : ''}">${cellContent}</div>`;
                 });
             });
-            
-            // Mettre à jour l'affichage de la semaine
+
             const weekStart = new Date(startOfWeek);
             const weekEnd = new Date(startOfWeek);
             weekEnd.setDate(weekStart.getDate() + 6);
-            document.getElementById('currentWeek').textContent = 
-                `${weekStart.getDate()}/${weekStart.getMonth() + 1} - ${weekEnd.getDate()}/${weekEnd.getMonth() + 1}`;
+            document.getElementById('currentWeek').textContent = `${weekStart.getDate()}/${weekStart.getMonth() + 1} - ${weekEnd.getDate()}/${weekEnd.getMonth() + 1}`;
         }
-        
+
         function getActivitiesForTimeSlot(date, time) {
-            // Simulation - en réalité, appeler l'API
             const activities = [];
             const day = date.getDay();
-            
+
             if (time === '18:00' && (day === 1 || day === 3)) {
                 activities.push({ name: 'Football', coach: 'Jean D.', type: 'sport' });
             }
@@ -445,35 +1246,33 @@
             if (time === '10:00' && day === 6) {
                 activities.push({ name: 'Tennis', coach: 'Pierre M.', type: 'sport' });
             }
-            
+
             return activities;
         }
-        
+
         function getActivityColor(type) {
             switch(type) {
-                case 'sport': return 'bg-blue-500';
-                case 'fitness': return 'bg-green-500';
-                case 'aquatique': return 'bg-purple-500';
-                default: return 'bg-gray-500';
+                case 'sport': return 'bg-[#7d223b]';
+                case 'fitness': return 'bg-[#3d7ce8]';
+                case 'aquatique': return 'bg-[#3455a6]';
+                default: return 'bg-[#57637a]';
             }
         }
-        
-        // Navigation calendrier
+
         function previousWeek() {
             currentWeek--;
             generateCalendar();
         }
-        
+
         function nextWeek() {
             currentWeek++;
             generateCalendar();
         }
-        
-        // Gestion des activités
+
         function showActivityDetails(activity) {
             currentActivity = activity;
             let details = {};
-            
+
             switch(activity) {
                 case 'football':
                     details = {
@@ -512,66 +1311,60 @@
                     };
                     break;
             }
-            
+
             document.getElementById('activityModalTitle').textContent = details.title;
             document.getElementById('activityModalContent').innerHTML = `
-                <div class="space-y-6">
+                <div style="display:grid; gap:20px;">
                     <div>
-                        <h4 class="font-bold text-gray-700 mb-2">Description</h4>
-                        <p class="text-gray-600">${details.description}</p>
+                        <h4 style="margin-bottom:8px; color: var(--sc-text-strong);">Description</h4>
+                        <p style="margin:0; color: var(--sc-muted); line-height:1.7;">${details.description}</p>
                     </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
+
+                    <div style="display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:16px;">
                         <div>
-                            <h4 class="font-bold text-gray-700 mb-2">Horaires</h4>
-                            <p class="text-gray-600">${details.schedule}</p>
+                            <h4 style="margin-bottom:8px; color: var(--sc-text-strong);">Horaires</h4>
+                            <p style="margin:0; color: var(--sc-muted); line-height:1.7;">${details.schedule}</p>
                         </div>
                         <div>
-                            <h4 class="font-bold text-gray-700 mb-2">Équipement</h4>
-                            <p class="text-gray-600">${details.equipment}</p>
+                            <h4 style="margin-bottom:8px; color: var(--sc-text-strong);">Équipement</h4>
+                            <p style="margin:0; color: var(--sc-muted); line-height:1.7;">${details.equipment}</p>
                         </div>
                     </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
+
+                    <div style="display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:16px;">
                         <div>
-                            <h4 class="font-bold text-gray-700 mb-2">Niveau</h4>
-                            <p class="text-gray-600">${details.level}</p>
+                            <h4 style="margin-bottom:8px; color: var(--sc-text-strong);">Niveau</h4>
+                            <p style="margin:0; color: var(--sc-muted);">${details.level}</p>
                         </div>
                         <div>
-                            <h4 class="font-bold text-gray-700 mb-2">Participants</h4>
-                            <p class="text-gray-600">${details.currentParticipants}/${details.maxParticipants}</p>
-                            <div class="capacity-bar bg-gray-200 mt-1">
-                                <div class="capacity-fill ${details.currentParticipants === details.maxParticipants ? 'bg-red-500' : 'bg-green-500'}" 
-                                     style="width: ${(details.currentParticipants/details.maxParticipants)*100}%"></div>
+                            <h4 style="margin-bottom:8px; color: var(--sc-text-strong);">Participants</h4>
+                            <p style="margin:0; color: var(--sc-muted);">${details.currentParticipants}/${details.maxParticipants}</p>
+                            <div class="capacity-bar" style="margin-top:10px;">
+                                <div class="capacity-fill ${details.currentParticipants === details.maxParticipants ? 'bg-[#d84b5f]' : 'bg-[#4ac5a5]'}" style="width: ${(details.currentParticipants/details.maxParticipants)*100}%"></div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div>
-                        <h4 class="font-bold text-gray-700 mb-2">Tarifs</h4>
-                        <p class="text-gray-600">${details.price}</p>
+                        <h4 style="margin-bottom:8px; color: var(--sc-text-strong);">Tarifs</h4>
+                        <p style="margin:0; color: var(--sc-muted);">${details.price}</p>
                     </div>
-                    
-                    <div class="flex space-x-3 pt-4 border-t">
-                        <button onclick="bookActivity('${activity}')" 
-                                class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ${details.currentParticipants === details.maxParticipants ? 'opacity-50 cursor-not-allowed' : ''}"
-                                ${details.currentParticipants === details.maxParticipants ? 'disabled' : ''}>
-                            <i class="fas fa-calendar-plus mr-2"></i>Réserver maintenant
-                        </button>
-                        <button onclick="closeActivityModal()" 
-                                class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
-                            Fermer
+
+                    <div class="modal-actions" style="padding-top:0; margin-top:0; border-top:none;">
+                        <button onclick="closeActivityModal()" class="sc-btn-ghost">Fermer</button>
+                        <button onclick="bookActivity('${activity}')" class="sc-btn-primary ${details.currentParticipants === details.maxParticipants ? 'opacity-50 cursor-not-allowed' : ''}" ${details.currentParticipants === details.maxParticipants ? 'disabled' : ''}>
+                            <i class="fas fa-calendar-plus"></i> Réserver maintenant
                         </button>
                     </div>
                 </div>
             `;
-            
-            document.getElementById('activityModal').classList.remove('hidden');
+
+            document.getElementById('activityModal').classList.add('open');
         }
-        
+
         function bookActivity(activity) {
             currentActivity = activity;
-            
+
             let activityName, availableSlots;
             switch(activity) {
                 case 'football':
@@ -596,173 +1389,155 @@
                     ];
                     break;
             }
-            
+
             document.getElementById('bookingTitle').textContent = `Réserver - ${activityName}`;
-            
+
             let slotsHTML = '';
             availableSlots.forEach((slot, index) => {
                 slotsHTML += `
-                    <div class="border rounded-lg p-4 mb-3 hover:border-blue-500 cursor-pointer" 
-                         onclick="selectTimeSlot(${index})" id="slot${index}">
-                        <div class="flex justify-between items-center">
+                    <div class="slot-card" onclick="selectTimeSlot(${index})" id="slot${index}">
+                        <div class="slot-header">
                             <div>
-                                <div class="font-medium">${slot.date} • ${slot.time}</div>
-                                <div class="text-sm text-gray-600">Coach: ${slot.coach}</div>
+                                <div class="slot-title">${slot.date} • ${slot.time}</div>
+                                <div class="slot-coach">Coach: ${slot.coach}</div>
                             </div>
-                            <div class="text-green-600 font-medium">Disponible</div>
+                            <div class="slot-state">Disponible</div>
                         </div>
                     </div>
                 `;
             });
-            
+
             document.getElementById('bookingContent').innerHTML = `
-                <div class="space-y-4">
-                    <p class="text-gray-600">Sélectionnez un créneau horaire:</p>
-                    
+                <div style="display:grid; gap:16px;">
+                    <p style="margin:0; color: var(--sc-muted);">Sélectionnez un créneau horaire :</p>
                     ${slotsHTML}
-                    
-                    <div id="selectedSlotInfo" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h4 class="font-bold text-blue-800 mb-2">Créneau sélectionné</h4>
-                        <p id="selectedSlotDetails" class="text-blue-700"></p>
+                    <div id="selectedSlotInfo" class="selected-info" style="display:none;">
+                        <h4>Créneau sélectionné</h4>
+                        <p id="selectedSlotDetails" style="margin:0; color: #dfeeff;"></p>
                     </div>
-                    
-                    <div class="flex justify-end space-x-3 pt-4 border-t">
-                        <button onclick="closeBookingModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">
-                            Annuler
-                        </button>
-                        <button onclick="confirmBooking()" id="confirmBookingBtn" 
-                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 opacity-50 cursor-not-allowed" disabled>
-                            <i class="fas fa-check mr-2"></i>Confirmer la réservation
+                    <div class="modal-actions">
+                        <button onclick="closeBookingModal()" class="sc-btn-ghost">Annuler</button>
+                        <button onclick="confirmBooking()" id="confirmBookingBtn" class="sc-btn-primary" style="opacity:0.5; cursor:not-allowed;" disabled>
+                            <i class="fas fa-check"></i> Confirmer la réservation
                         </button>
                     </div>
                 </div>
             `;
-            
-            document.getElementById('bookingModal').classList.remove('hidden');
+
+            document.getElementById('bookingModal').classList.add('open');
         }
-        
+
         function selectTimeSlot(index) {
-            // Réinitialiser toutes les sélections
             for (let i = 0; i < 5; i++) {
                 const slot = document.getElementById(`slot${i}`);
                 if (slot) {
-                    slot.classList.remove('border-blue-500', 'bg-blue-50');
+                    slot.classList.remove('selected');
                 }
             }
-            
-            // Activer la sélection courante
+
             const selectedSlot = document.getElementById(`slot${index}`);
-            selectedSlot.classList.add('border-blue-500', 'bg-blue-50');
-            
-            // Afficher les détails
-            document.getElementById('selectedSlotInfo').classList.remove('hidden');
-            document.getElementById('selectedSlotDetails').textContent = 
-                `Vous avez sélectionné le créneau: ${selectedSlot.querySelector('.font-medium').textContent}`;
-            
-            // Activer le bouton de confirmation
-            document.getElementById('confirmBookingBtn').disabled = false;
-            document.getElementById('confirmBookingBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+            if (selectedSlot) {
+                selectedSlot.classList.add('selected');
+            }
+
+            document.getElementById('selectedSlotInfo').style.display = 'block';
+            document.getElementById('selectedSlotDetails').textContent = `Vous avez sélectionné le créneau: ${selectedSlot.querySelector('.slot-title').textContent}`;
+
+            const confirmBtn = document.getElementById('confirmBookingBtn');
+            confirmBtn.disabled = false;
+            confirmBtn.style.opacity = '1';
+            confirmBtn.style.cursor = 'pointer';
         }
-        
+
         function confirmBooking() {
-            const selectedSlot = document.querySelector('.border-blue-500');
+            const selectedSlot = document.querySelector('.slot-card.selected');
             if (!selectedSlot) return;
-            
-            const slotDetails = selectedSlot.querySelector('.font-medium').textContent;
+
+            const slotDetails = selectedSlot.querySelector('.slot-title').textContent;
             showNotification(`Réservation confirmée pour ${currentActivity} (${slotDetails})`, 'success');
-            
-            // Mettre à jour la capacité
             updateCapacity(currentActivity, 1);
-            
-            // Désactiver le bouton si complet
+
             const button = document.getElementById(`book${capitalizeFirstLetter(currentActivity)}Btn`);
             if (button) {
                 const capacityText = document.getElementById(`${currentActivity}Capacity`).textContent;
                 const [current, max] = capacityText.split('/').map(Number);
                 if (current + 1 >= max) {
                     button.disabled = true;
-                    button.classList.add('opacity-50', 'cursor-not-allowed');
+                    button.style.opacity = '0.5';
+                    button.style.cursor = 'not-allowed';
                     button.textContent = 'Complet';
                 }
             }
-            
+
             closeBookingModal();
         }
-        
+
         function joinWaitlist(activity) {
             showNotification(`Ajouté à la liste d'attente pour ${activity}`, 'info');
-            
-            // Simuler l'ajout à la liste d'attente
             setTimeout(() => {
                 showNotification(`Une place s'est libérée pour ${activity}!`, 'success');
             }, 5000);
         }
-        
+
         function updateCapacity(activity, change) {
             const capacityElement = document.getElementById(`${activity}Capacity`);
             const barElement = document.getElementById(`${activity}Bar`);
-            
+
             if (capacityElement && barElement) {
                 const [current, max] = capacityElement.textContent.split('/').map(Number);
                 const newCurrent = Math.max(0, Math.min(current + change, max));
-                
+
                 capacityElement.textContent = `${newCurrent}/${max}`;
                 const percentage = (newCurrent / max) * 100;
                 barElement.style.width = `${percentage}%`;
-                
-                // Changer la couleur si nécessaire
+
                 if (newCurrent >= max) {
-                    barElement.classList.remove('bg-green-500');
-                    barElement.classList.add('bg-red-500');
+                    barElement.classList.remove('bg-[#4ac5a5]', 'bg-[#f4b860]');
+                    barElement.classList.add('bg-[#d84b5f]');
                 } else if (percentage > 80) {
-                    barElement.classList.remove('bg-green-500');
-                    barElement.classList.add('bg-yellow-500');
+                    barElement.classList.remove('bg-[#4ac5a5]', 'bg-[#d84b5f]');
+                    barElement.classList.add('bg-[#f4b860]');
                 } else {
-                    barElement.classList.remove('bg-red-500', 'bg-yellow-500');
-                    barElement.classList.add('bg-green-500');
+                    barElement.classList.remove('bg-[#d84b5f]', 'bg-[#f4b860]');
+                    barElement.classList.add('bg-[#4ac5a5]');
                 }
             }
         }
-        
+
         function checkExistingBookings() {
-            // Vérifier les réservations existantes (simulation)
-            // En réalité, appeler l'API pour vérifier
             const today = new Date();
-            if (today.getDay() === 2 || today.getDay() === 4) { // Mardi ou Jeudi
+            if (today.getDay() === 2 || today.getDay() === 4) {
                 showNotification('Rappel: Vous avez basketball ce soir à 19h', 'info');
             }
         }
-        
+
         function showTimeSlotDetails(time, dayIndex, activityName) {
             const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
             showNotification(`${activityName} le ${days[dayIndex]} à ${time}`, 'info');
         }
-        
+
         function showAddActivityModal() {
             showNotification('Fonctionnalité en développement', 'info');
-            // Implémenter un formulaire pour ajouter une nouvelle activité
         }
-        
-        // Filtres
+
         function showAllActivities() {
             const activities = document.querySelectorAll('.activity-card');
             activities.forEach(activity => activity.classList.remove('hidden'));
         }
-        
+
         function filterActivities(type) {
             const activities = document.querySelectorAll('.activity-card');
-            // Dans une implémentation réelle, filtrer par type
             showNotification(`Filtrage des activités ${type}`, 'info');
         }
-        
+
         function searchActivities() {
             const searchTerm = document.getElementById('activitySearch').value.toLowerCase();
             const activities = document.querySelectorAll('.activity-card');
-            
+
             activities.forEach(activity => {
                 const title = activity.querySelector('h3').textContent.toLowerCase();
-                const description = activity.querySelector('p').textContent.toLowerCase();
-                
+                const description = activity.querySelector('.activity-subtitle').textContent.toLowerCase();
+
                 if (title.includes(searchTerm) || description.includes(searchTerm)) {
                     activity.classList.remove('hidden');
                 } else {
@@ -770,51 +1545,52 @@
                 }
             });
         }
-        
+
         function updateActivityStats() {
-            // Simulation de stats
             document.getElementById('weeklySessions').textContent = '12';
             document.getElementById('occupancyRate').textContent = '78%';
         }
-        
-        // Utilitaires
+
         function capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
-        
+
         function closeBookingModal() {
-            document.getElementById('bookingModal').classList.add('hidden');
+            document.getElementById('bookingModal').classList.remove('open');
         }
-        
+
         function closeActivityModal() {
-            document.getElementById('activityModal').classList.add('hidden');
+            document.getElementById('activityModal').classList.remove('open');
         }
-        
+
         function showNotification(message, type = 'info') {
             const colors = {
-                success: 'bg-green-500',
-                error: 'bg-red-500',
-                info: 'bg-blue-500',
-                warning: 'bg-yellow-500'
+                success: 'success',
+                error: 'error',
+                info: 'info',
+                warning: 'warning'
             };
-            
+
             const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg text-white ${colors[type]}`;
+            notification.className = `notification ${colors[type] || 'info'}`;
             notification.innerHTML = `
-                <div class="flex items-center">
-                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-triangle' : 'info'}-circle mr-2"></i>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-triangle' : 'info'}-circle"></i>
                     <span>${message}</span>
                 </div>
             `;
-            
+
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.style.opacity = '0';
                 notification.style.transition = 'opacity 0.5s';
                 setTimeout(() => notification.remove(), 500);
             }, 3000);
         }
+    </script>
+    <script>
+        (function(){const b=document.getElementById('scMenuBtn'),n=document.getElementById('scNavLinks');if(b&&n){b.addEventListener('click',()=>{const o=n.classList.toggle('sc-open');b.setAttribute('aria-expanded',String(o));b.innerHTML=o?'<i class="fas fa-xmark"></i>':'<i class="fas fa-bars"></i>'});document.addEventListener('click',event=>{if(!n.contains(event.target)&&!b.contains(event.target)){n.classList.remove('sc-open');b.setAttribute('aria-expanded','false');b.innerHTML='<i class="fas fa-bars"></i>'}})}})();
     </script>
 </body>
 </html>
