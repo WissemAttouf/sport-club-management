@@ -1,3 +1,4 @@
+
 name: Kubernetes manifest validation
 
 on:
@@ -21,22 +22,33 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
       - name: Install YAML parser
         run: python -m pip install --disable-pip-version-check pyyaml
+
       - name: Validate Kubernetes YAML syntax
         run: |
           python - <<'PY'
           from pathlib import Path
           import yaml
+
           files = sorted(Path("k8s").glob("*.yaml"))
           if not files:
               raise SystemExit("No Kubernetes YAML files found in k8s/")
+
           for path in files:
-              docs = [doc for doc in yaml.safe_load_all(path.read_text(encoding="utf-8-sig")) if doc]
+              docs = [
+                  doc
+                  for doc in yaml.safe_load_all(
+                      path.read_text(encoding="utf-8-sig")
+                  )
+                  if doc
+              ]
               if not docs:
                   raise SystemExit(f"No Kubernetes resources found in {path}")
               print(f"OK: {path} ({len(docs)} resource(s))")

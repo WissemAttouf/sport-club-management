@@ -1,3 +1,4 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,11 +27,14 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+
+          # Configuration Spring depuis le ConfigMap
+          envFrom:
+            - configMapRef:
+                name: sport-club-config
+
+          # Identifiants MySQL depuis le Secret
           env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: docker
-            - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://sport-club-db:3306/sportdb
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -41,6 +45,7 @@ spec:
                 secretKeyRef:
                   name: sport-club-secrets
                   key: db-password
+
           resources:
             requests:
               memory: 384Mi
@@ -48,18 +53,21 @@ spec:
             limits:
               memory: 768Mi
               cpu: 750m
+
           startupProbe:
             httpGet:
               path: /actuator/health
               port: http
             periodSeconds: 5
             failureThreshold: 30
+
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
               port: http
             periodSeconds: 10
             failureThreshold: 3
+
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
